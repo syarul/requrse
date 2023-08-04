@@ -17,6 +17,7 @@ jobs:
         image: mongo:3.4.23
         ports:
           - 27017:27017
+        options: --auth
       # run:  sudo docker run --name mongo -d -p 27017:27017 mongo
 
     steps:
