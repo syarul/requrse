@@ -13,11 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      mongodb:
-        image: mongo:latest
-        ports:
-          - 27017:27017
-        options: --auth
+      # mongodb:
+      #   image: mongo:3.4.23
+      #   ports:
+      #     - 27017:27017
+      run:  sudo docker run --name mongo -d -p 27017:27017 mongo
 
     steps:
       - uses: actions/checkout@v3
