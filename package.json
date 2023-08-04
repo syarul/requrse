@@ -1,6 +1,6 @@
 {
   "name": "@syarul/requrse",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Lightweight driven query language",
   "main": "libs/executeQuery.js",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/syarul/ONQL.git"
+    "url": "git+https://github.com/syarul/requrse.git"
   },
   "keywords": [
     "GraphQL",
@@ -24,9 +24,9 @@
   "author": "Shahrul Nizam Selamat <hottincup@gmail.com>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/syarul/ONQL/issues"
+    "url": "https://github.com/syarul/requrse/issues"
   },
-  "homepage": "https://github.com/syarul/ONQL#readme",
+  "homepage": "https://github.com/syarul/requrse#readme",
   "devDependencies": {
     "dotenv": "^16.3.1",
     "ioredis": "^5.3.2",

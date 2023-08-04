@@ -1,5 +1,5 @@
 const assert = require('assert')
-const onqlExecute = require('./starwars')
+const requrseExec = require('./starwars')
 
 const testList = [
   0,
@@ -30,7 +30,7 @@ test(0, 'Correctly identifies R2-D2 as the hero of the Star Wars Saga', async ()
       }
     }
   }
-  const result = await onqlExecute(query)
+  const result = await requrseExec(query)
   assert.deepEqual(result, {
     character: {
       hero: {
@@ -49,7 +49,7 @@ test(1, 'Correctly identifies Luke as the hero of the Star Wars Saga', async () 
       }
     }
   }
-  const result = await onqlExecute(query)
+  const result = await requrseExec(query)
   assert.deepEqual(result, {
     character: {
       hero: {
@@ -68,7 +68,7 @@ test(2, 'Correctly identifies C-3PO using ID', async () => {
       }
     }
   }
-  const result = await onqlExecute(query)
+  const result = await requrseExec(query)
   assert.deepEqual(result, {
     character: {
       droid: {
@@ -90,7 +90,7 @@ test(3, 'Allows us to query for the ID and friends of R2-D2', async () => {
       }
     }
   }
-  const result = await onqlExecute(query)
+  const result = await requrseExec(query)
   assert.deepEqual(result, {
     character: {
       hero: {
@@ -127,7 +127,7 @@ test(4, 'Allows us to query for the friends of friends of R2-D2', async () => {
       }
     }
   }
-  const result = await onqlExecute(query)
+  const result = await requrseExec(query)
   assert.deepEqual(result, {
     character: {
       hero: {
@@ -199,7 +199,7 @@ test(5, 'Allows us to query for Luke Skywalker directly, using his ID', async ()
       }
     }
   }
-  const result = await onqlExecute(query)
+  const result = await requrseExec(query)
   assert.deepEqual(result, {
     human: {
       human: {
@@ -218,7 +218,7 @@ test(6, 'Allows us to create a generic query, then pass an invalid ID to get nul
       }
     }
   }
-  const result = await onqlExecute(query)
+  const result = await requrseExec(query)
   assert.deepEqual(result, {
     human: {
       human: null
@@ -235,7 +235,7 @@ test(7, 'Allows us to query for Luke, changing his key with an alias', async () 
       }
     }
   }
-  const result = await onqlExecute(query)
+  const result = await requrseExec(query)
   assert.deepEqual(result, {
     human: {
       'human/luke': {
@@ -259,7 +259,7 @@ test(8, 'Allows us to query for both Luke and Leia, using two root fields and an
     }
   }
 
-  const result = await onqlExecute(query)
+  const result = await requrseExec(query)
   assert.deepEqual(result, {
     human: {
       'human/luke': {
@@ -288,7 +288,7 @@ test(9, 'Allows us to query using duplicated content', async () => {
     }
   }
 
-  const result = await onqlExecute(query)
+  const result = await requrseExec(query)
   assert.deepEqual(result, {
     human: {
       'human/luke': {
@@ -313,7 +313,7 @@ test(10, 'Fail fast on accessing secretBackstory', async () => {
     }
   }
 
-  await onqlExecute(query)
+  await requrseExec(query)
     .catch(error => {
       assert.equal(error.message, 'secretBackstory is secret.')
     })
