@@ -1,0 +1,41 @@
+{
+  "name": "@syarul/requrse",
+  "version": "0.0.1",
+  "description": "Lightweight driven query language",
+  "main": "libs/executeQuery.js",
+  "scripts": {
+    "test:starwars": "node samples/starwars/starwars.test.js",
+    "test:mongoose": "node samples/mongoose/mongoose.test.js",
+    "test:mongoose-lookup": "node samples/mongoose/mongoose-lookup.test.mjs",
+    "test:redis": "node samples/redis/redis.test.js",
+    "test:requrse": "node test/requrse.test.mjs",
+    "test": "npm run test:starwars && npm run test:mongoose && npm run test:mongoose-lookup && npm run test:redis && npm run test:requrse"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/syarul/ONQL.git"
+  },
+  "keywords": [
+    "GraphQL",
+    "Query Language",
+    "CRUD",
+    "api"
+  ],
+  "author": "Shahrul Nizam Selamat <hottincup@gmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/syarul/ONQL/issues"
+  },
+  "homepage": "https://github.com/syarul/ONQL#readme",
+  "devDependencies": {
+    "dotenv": "^16.3.1",
+    "ioredis": "^5.3.2",
+    "mongoose": "^7.4.1"
+  },
+  "dependencies": {
+    "deep-equal": "^2.2.2"
+  },
+  "publishConfig": {
+    "@syarul:registry": "https://npm.pkg.github.com"
+  }
+}
