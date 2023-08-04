@@ -17,8 +17,6 @@ jobs:
         image: mongo:latest
         ports:
           - 27017:27017
-        # options: --auth
-      # run:  sudo docker run --name mongo -d -p 27017:27017 mongo
 
     steps:
       - uses: actions/checkout@v3
