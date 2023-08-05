@@ -1,8 +1,8 @@
 {
   "name": "@syarul/requrse",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Lightweight driven query language",
-  "main": "libs/executeQuery.js",
+  "main": "libs/executor.js",
   "scripts": {
     "test:starwars": "node samples/starwars/starwars.test.js",
     "test:mongoose": "node samples/mongoose/mongoose.test.js",
