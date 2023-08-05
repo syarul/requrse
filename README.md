@@ -5,7 +5,7 @@ Lightweight driven query language
 [![requrse CI](https://github.com/syarul/requrse/actions/workflows/main-ci.yml/badge.svg)](https://github.com/syarul/requrse/actions/workflows/main-ci.yml)
 
 ## What is reQurse
-In hindsight, many query language or API-driven solutions tend to be burdened by cumbersome paradigms, abstraction complexity, bloated safe type checking, and steep learning curves. However, **reQurse** sets out to address these challenges to a significant extent. This effort is driven by Decision Science, providing the fundamental approach to overcome the complexities associated with CRUD operations. With reQurse, the aim is to offer a streamlined and efficient CRUD library solution that simplifies api development and tackle complex data management tasks with ease.
+Leveraging the principles of Decision Science, **reQurse** introduces an innovative approach that overcomes the complexities of CRUD operations. The focus is on delivering a streamlined and efficient CRUD library solution, simplifying API development, and effortlessly handling complex data management tasks. **reQurse** utilized JSON-based queries enables you to load data from external configuration files as your numbers of APIs grow, reducing code dependencies and mitigating the need to write lengthy procedural APIs. This approach promotes a modular and streamlined code structure, enhancing flexibility and maintainability.
 
 > This library take some inspirations from NextQL and GraphQL
 
