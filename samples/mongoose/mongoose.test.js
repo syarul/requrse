@@ -14,6 +14,16 @@ mongoose
 
 const requrseMongoose = require('./mongoose')
 
+const test = (result, expected, msg = '') => {
+  try {
+    assert.deepEqual(result, expected)
+    console.log(`\r\n:: ${msg} ::\r\n`)
+  } catch(e) {
+    console.log(`\r\n:: Test failed: ${msg} ::`)
+    console.error(e)
+  }
+}
+
 const modelOptions = {
   name: 'Book',
   fields: {
@@ -24,7 +34,7 @@ const modelOptions = {
 
 async function save () {
   const books = await requrseMongoose({
-    book: {
+    Book: {
       create: {
         $params: {
           data: {
@@ -42,7 +52,7 @@ async function save () {
 
 async function find () {
   const books = await requrseMongoose({
-    book: {
+    Book: {
       find: {
         $params: {
           query: { genre: 'Fantasy' }
@@ -50,65 +60,63 @@ async function find () {
         _id: 1
       }
     }
-  }, modelOptions)
+  })
 
   return books
 }
 
 async function update (id, data) {
   const books = await requrseMongoose({
-    book: {
+    Book: {
       update: {
         $params: { id, data },
         title: 1
       }
     }
-  }, modelOptions)
+  })
 
   return books
 }
 
 async function remove (id) {
   const books = await requrseMongoose({
-    book: {
+    Book: {
       remove: {
         $params: { id },
         _id: 1
       }
     }
-  }, modelOptions)
+  })
 
   return books
 }
 
-async function test () {
+async function exec () {
   await save()
     .then(result => {
-      console.log(result)
-      assert.deepEqual(result, {
-        book: {
+      test(result, {
+        Book: {
           create: {
             title: "Harry Potter and the Sorcerer's Stone"
           }
         }
-      })
+      }, 'Should return result after save')
     }, console.error)
 
   let id
 
   await find()
     .then(result => {
-      id = result.book.find._id
+      id = result.Book.find._id
       return result
     })
-    .then(console.log, console.error)
 
   await update(id, {
     title: 'Harry Potter and the Prisoner of Azkaban'
-  }).then(console.log, console.error)
+  })
 
   await requrseMongoose({
-    book: {
+    Book: {
       find: {
         $params: {
           query: { genre: 'Fantasy' }
@@ -116,30 +124,28 @@ async function test () {
         title: 1
       }
     }
-  }, modelOptions).then(result => {
-    console.log(result)
-    assert.deepEqual(result, {
-      book: {
+  }).then(result => {
+    test(result, {
+      Book: {
         find: {
           title: 'Harry Potter and the Prisoner of Azkaban'
         }
       }
-    })
+    }, 'Should return correct result after update')
   }, console.error)
 
-  await remove(id).then(console.log, console.error)
+  await remove(id)
 
   await find()
     .then(result => {
-      console.log(result)
-      assert.deepEqual(result, {
-        book: {
+      test(result, {
+        Book: {
           find: []
         }
-      })
+      }, 'Should show empty result after removal')
     }, console.error)
 }
 
-test().then(() => {
+exec().then(() => {
   mongoose.disconnect()
 })

@@ -6,8 +6,6 @@ const require = createRequire(import.meta.url)
 
 const queryExec = require('../libs/executor')
 
-const log = (...d) => console.log(require('util').inspect(d, false, 9, true))
-
 const fs = require('fs')
 
 const file = './test/data.json'
@@ -43,7 +41,7 @@ const config = (param) => ({
   },
   addedAge: (current, $params) => {
     $params.forEach(key => {
-      if(current[key]){
+      if (current[key]) {
         current[key]++
       }
     })
@@ -65,7 +63,6 @@ const methods = {
   occupation: 'occupation',
   addedAge: 'addedAge,age'
 }
-
 
 await queryExec({
   Test: {

@@ -63,7 +63,7 @@ await queryExec({
       person: {
         $params: { age: 30 },
         name: 1,
-        age:1
+        age: 1
       }
     }
   }
@@ -86,7 +86,7 @@ await queryExec({
       person: {
         $params: { age: 30 },
         name: 1,
-        age:1,
+        age: 1,
         occupation: 1
       }
     }
@@ -94,16 +94,16 @@ await queryExec({
 },
 {
   methods: {
-    occupation(){
+    occupation () {
       return { type: 'Copywriter', started: '2020', city: 'NY' }
     },
     person: 'getPerson,type'
   },
   config: (param) => ({
-    getPerson (occupation, { age }, [ $param ]) {
-      return { 
-        name: 'Foo', 
-        age, 
+    getPerson (occupation, { age }, [$param]) {
+      return {
+        name: 'Foo',
+        age,
         occupation: {
           [$param]: occupation[$param]
         }
@@ -118,7 +118,7 @@ await queryExec({
       person: {
         $params: { name: 'Foo' },
         name: 1,
-        age:1,
+        age: 1,
         birth: {
           year: 1,
           area: {
@@ -126,8 +126,8 @@ await queryExec({
           }
         },
         occupation: {
-          type: 1,
-        },
+          type: 1
+        }
       }
     }
   }
@@ -140,13 +140,13 @@ await queryExec({
     birth: 'birth'
   },
   config: (param) => ({
-    area() {
+    area () {
       return { city: 'NY' }
     },
-    occupation () { 
+    occupation () {
       return { type: 'CT0' }
     },
-    birth () { 
+    birth () {
       return { year: '1981' }
     },
     getPerson (name) {

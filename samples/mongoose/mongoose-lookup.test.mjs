@@ -5,8 +5,6 @@ import { createRequire } from 'module'
 
 const require = createRequire(import.meta.url)
 
-const log = (d) => console.log(require('util').inspect(d, false, 9, true))
-
 const requrseMongoose = require('./mongoose')
 
 mongoose.Promise = global.Promise
@@ -17,6 +15,16 @@ mongoose
     console.log(error)
     process.exit(1)
   })
+
+const test = (result, expected, msg = '') => {
+  try {
+    assert.deepEqual(result, expected)
+    console.log(`\r\n:: ${msg} ::\r\n`)
+  } catch(e) {
+    console.log(`\r\n:: Test failed: ${msg} ::`)
+    console.error(e)
+  }
+}
 
 /**
  * This is a sample showcase how to do lookup query, instead using mongodb/mongoose
@@ -92,85 +100,79 @@ for (const model of modelOptions) {
   index++
 }
 
-async function lookup (model, query, lookupModel) {
+async function lookup (query) {
   const queryResult = await requrseMongoose({
-    [model.name]: {
+    Country: {
       find: {
         $params: {
           query
         },
-        ...{
-          ...fields(model),
-          lookup: {
-            $params: {
-              model: lookupModel,
-              country_code: 1
-            },
-            ...fields(lookupModel)
-          }
+        country_name: 1,
+        population: 1,
+        lookup: {
+          $params: {
+            name: 'City',
+            country_code: 1
+          },
+          city_name: 1,
+          population: 1
         }
       }
     }
-  }, model)
+  })
 
   return queryResult
 }
 
-await lookup(modelOptions[0], { country_code: 'US' }, modelOptions[1]).then(result => {
-  log(result)
-  assert.deepEqual(result, {
+await lookup({ country_code: 'US' }).then(result => {
+  test(result, {
     Country: {
       find: {
         country_name: 'USA',
-        country_code: 'US',
         population: 331000000,
         lookup: [
           {
             city_name: 'Washington D.C.',
-            country_code: 'US',
             population: 700000
           }
         ]
       }
     }
-  })
+  }, 'Should return result with lookup table')
 }, console.error)
 
-await lookup(modelOptions[0], { country_code: 'CA' }, modelOptions[1]).then(result => {
-  log(result)
-  assert.deepEqual(result, {
+await lookup({ country_code: 'CA' }).then(result => {
+  test(result, {
     Country: {
       find: {
         country_name: 'Canada',
-        country_code: 'CA',
         population: 38000000,
         lookup: [
           {
             city_name: 'Ottawa',
-            country_code: 'CA',
             population: 1000000
           }
         ]
       }
     }
-  })
+  }, 'Should return result with lookup table')
 }, console.error)
 
-async function deleteModel (modelOptions) {
+async function deleteModel (model) {
   const queryResult = await requrseMongoose({
-    [modelOptions.name]: {
+    [model.name]: {
       delete: {
         acknowledged: 1, 
         deletedCount: 1
       }
     }
-  }, modelOptions)
+  })
 
   return queryResult
 }
 
 for (const model of modelOptions) {
-  await deleteModel(model).then(log, console.error)
+  await deleteModel(model)//.then(log, console.error)
 }
 
 mongoose.disconnect()

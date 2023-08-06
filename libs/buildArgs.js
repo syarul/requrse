@@ -8,7 +8,7 @@ const chk = (obj) => {
     })
     return newObj
   }
-  if(obj instanceof Array && obj.length === 1){
+  if (obj instanceof Array && obj.length === 1) {
     return chk(obj[0])
   }
   return obj
@@ -28,7 +28,7 @@ const reducer = (arr) => {
 module.exports = function ($vParams, params, ...currentQuery) {
   let args = []
   args = args.concat(reducer(currentQuery))
-  if($vParams) {
+  if ($vParams) {
     args.push($vParams)
   }
   args.push(params)

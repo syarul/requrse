@@ -12,6 +12,7 @@ const executeQuery = async (query, currentQuery, { methods, config }, mergeQuery
   let params, alias, compute, args, $params, $vParams, result, computed, failedComputed
   for (let [key, value] of entries) {
     ;[key, alias] = getAlias('/', key)
+    mergeQuery.key = mergeQuery.key || key // model cache support
     if (methods[key]) {
       ;[compute, params] = computeMethod(compute, methods[key], params, config)
       ;[args, $params, $vParams] = getCurrentQueryArgs(value, currentQuery, alias, params)
