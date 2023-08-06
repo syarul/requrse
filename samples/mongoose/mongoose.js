@@ -22,6 +22,7 @@ module.exports = (query, opts) => queryExec(query, {
         return mongoose.model(name, fields)
       } else if (mongoose.models[name]){
         return mongoose.models[name]
+        // model cache retrieval
       } else if (Model[this.key]) {
         return model.call(null, Model[this.key])
       } else {
@@ -48,6 +49,13 @@ module.exports = (query, opts) => queryExec(query, {
         return model.call(this).findByIdAndRemove(id)
       },
       lookup ({ name, ...params }) {
+        // you can alternatively access query result from context 'this',
+        // by default result is return as the 1st argument by previous keys/entries that 
+        // exist in the query i.e. (in this usage case) country,country_code or population
+        // as the method name. The starwars example showcase this through the 'character.friends'
+        // under 'friends' method naming. Since we using a generic name call 'lookup'
+        // that don't exist in the previous query entry, context 'this' is where you
+        // should lookup to when constructing you next query parameters if needed be
         const query = Object.entries(params)
           .map(([key]) => key)
           .reduce((acc, curr) => ({ ...acc, [curr]: this._doc[curr] }), {})

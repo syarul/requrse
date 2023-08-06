@@ -109,7 +109,7 @@ async function lookup (query) {
         },
         country_name: 1,
         population: 1,
-        lookup: {
+        lookup: { // generic method that don't exist as entry of the previous query
           $params: {
             name: 'City',
             country_code: 1

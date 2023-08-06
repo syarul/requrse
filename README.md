@@ -205,3 +205,11 @@ await queryExec({
 //   }
 // }
 ```
+
+## Advance usage with lookup table and model caching
+
+Using reQurse for lookup queries offers greater flexibility and memory efficiency compared to the standard database lookup method. With reQurse, you can avoid resource exhaustion issues like timeouts, especially when dealing with complex data structures and custom projections. To see an implementation example, check out the [Mongoose Lookup](https://github.com/syarul/requrse/blob/main/samples/mongoose/mongooes-lookup.test.mjs) sample.
+
+Additionally, reQurse provides support for model caching, eliminating the need to repeatedly declare the model for each query. This caching feature streamlines your querying process. For a practical use case, refer to the [Mongoose](https://github.com/syarul/requrse/blob/main/samples/mongoose/mongooes.test.js) sample for usage case.
+
+> P/S: If your Entity-Relationship Diagram (ERD) is massive and you anticipate having more, it's better to convert your queries into JSON format and store them elsewhere, for example, in a Redis database or AWS DynamoDB.
