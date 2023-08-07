@@ -2,7 +2,7 @@ const assert = require('assert')
 const Redis = require('ioredis')
 require('dotenv').config()
 
-const requrseRedis = require('./redis')
+const requrseRedis = require('./redis.middleware')
 
 const redis = new Redis(`rediss://default:${process.env.REDIS_KEY}@mutual-sponge-37619.upstash.io:37619`)
 

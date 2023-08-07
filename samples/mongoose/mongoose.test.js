@@ -12,7 +12,7 @@ mongoose
     process.exit(1)
   })
 
-const requrseMongoose = require('./mongoose')
+const requrseMongoose = require('./mongoose.middleware')
 
 const test = (result, expected, msg = '') => {
   try {

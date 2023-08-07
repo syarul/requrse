@@ -5,7 +5,7 @@ import { createRequire } from 'module'
 
 const require = createRequire(import.meta.url)
 
-const requrseMongoose = require('./mongoose')
+const requrseMongoose = require('./mongoose.middleware')
 
 mongoose.Promise = global.Promise
 

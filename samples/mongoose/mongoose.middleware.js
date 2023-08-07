@@ -48,17 +48,11 @@ module.exports = (query, opts) => queryExec(query, {
       remove ({ id }) {
         return model.call(this).findByIdAndRemove(id)
       },
-      lookup ({ name, ...params }) {
-        // you can alternatively access query result from context 'this',
-        // by default result is return as the 1st argument by previous keys/entries that 
-        // exist in the query i.e. (in this usage case) country,country_code or population
-        // as the method name. The starwars example showcase this through the 'character.friends'
-        // under 'friends' method naming. Since we using a generic name call 'lookup'
-        // that don't exist in the previous query entry, context 'this' is where you
-        // should lookup to when constructing you next query parameters if needed be
+      lookup (result, { name, ...params }) {
+        // you can alternatively access query result from context 'this' also
         const query = Object.entries(params)
           .map(([key]) => key)
-          .reduce((acc, curr) => ({ ...acc, [curr]: this._doc[curr] }), {})
+          .reduce((acc, curr) => ({ ...acc, [curr]: result[curr] }), {})
         return model({ name }).find(query)
       },
       delete () {

@@ -7,6 +7,17 @@ Lightweight driven query language
 ## What is reQurse
 Leveraging the principles of Decision Science, **reQurse** introduces an innovative approach that overcomes the complexities of CRUD operations. The focus is on delivering a streamlined and efficient CRUD library solution, simplifying API development, and effortlessly handling complex data management tasks. **reQurse** utilized JSON-based queries enables you to load data from external configuration files as your numbers of APIs grow, reducing code dependencies and mitigating the need to write lengthy procedural APIs. This approach promotes a modular and streamlined code structure, enhancing flexibility and maintainability.
 
+Some of features offer by **reQurse**:-
+- **On-Demand Data Retrieval**: Fetch only what you need, avoid loading large dataset in memory at once.
+- **Distributed Processing**: Or step-by-step processing, complex queries is broken down into smaller steps, you can process data incrementally avoiding excessive memory consumption.
+- **Memory Efficiency**: With limited data in memory at any given time, you can handle larger datasets and complex queries more efficiently.
+- **Custom Computations**: With custom computation methods, you can perform data aggregation, sorting, filter or other operations without relying on in-memory database operations.
+- **Dynamic Traversal**: The ability to traverse complex object models like JSON allows you to navigate data in a more flexible and adaptable manner.
+- **Enhanced Performance**: By fetching and processing data in smaller units, you can achieve better query performance and reduce processing time.
+- **Support for Multiple Endpoints**: Flexible enough to support multiple endpoints, allowing you to interact with various APIs or databases using the same query language. This streamlines your codebase and enables a consistent approach across different data sources.
+- **Portability and Migration** : Is straightforward. You only need to write the middleware for **reQurse**, avoiding the need to rewrite entire queries when migrating or switching databases or APIs. This makes the codebase more maintainable and adaptable to changes.
+- **Client-Side Querying** : **reQurse** offers portability, making it accessible to clients, thus reducing server-side processing. Clients can perform queries directly, enabling more client-based operations and minimizing the server's workload. On the server side, you may require a validation wrapper to ensure secure requests. Moreover, you can also control field results as needed, granting precise control over the data returned.
+
 > This library take some inspirations from NextQL and GraphQL
 
 ## Getting Start
@@ -206,10 +217,10 @@ await queryExec({
 // }
 ```
 
-## Advance usage with lookup table and model caching
+## Sample usage with lookup table and model caching
 
-Using reQurse for lookup queries offers greater flexibility and memory efficiency compared to the standard database lookup method. With reQurse, you can avoid resource exhaustion issues like timeouts, especially when dealing with complex data structures and custom projections. To see an implementation example, check out the [Mongoose Lookup](https://github.com/syarul/requrse/blob/main/samples/mongoose/mongoose-lookup.test.mjs) sample.
+Using **reQurse** for lookup queries offers greater flexibility and memory efficiency compared to the standard database lookup method. With reQurse, you can avoid resource exhaustion issues like timeouts, especially when dealing with complex data structures and custom projections. To see an implementation example, check out the [Mongoose Lookup](https://github.com/syarul/requrse/blob/main/samples/mongoose/mongoose-lookup.test.mjs) sample.
 
-Additionally, reQurse provides support for model caching, eliminating the need to repeatedly declare the model for each query. This caching feature streamlines your querying process. For a practical use case, refer to the [Mongoose](https://github.com/syarul/requrse/blob/main/samples/mongoose/mongoose.test.js) sample for usage case.
+Additionally, **reQurse** provides support for model caching, eliminating the need to repeatedly declare the model for each query. This caching feature streamlines your querying process. For a practical use case, refer to the [Mongoose Middleware](https://github.com/syarul/requrse/blob/main/samples/mongoose/mongoose.middleware.js) query for usage case.
 
 > P/S: If your Entity-Relationship Diagram (ERD) is massive and you anticipate having more, it's better to convert your queries into JSON format and store them elsewhere, for example, in a Redis database or AWS DynamoDB.
