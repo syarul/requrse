@@ -1,11 +1,11 @@
 {
   "name": "@syarul/requrse",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Lightweight driven query language",
   "main": "libs/executor.js",
   "scripts": {
     "test:starwars": "node samples/starwars/starwars.test.js",
-    "test:mongoose": "node samples/mongoose/mongoose.test.js",
+    "test:mongoose": "node samples/mongoose/mongoose.test.mjs",
     "test:mongoose-lookup": "node samples/mongoose/mongoose-lookup.test.mjs",
     "test:redis": "node samples/redis/redis.test.js",
     "test:requrse": "node test/requrse.test.mjs",

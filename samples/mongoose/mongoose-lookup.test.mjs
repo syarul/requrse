@@ -172,7 +172,7 @@ async function deleteModel (model) {
 }
 
 for (const model of modelOptions) {
-  await deleteModel(model)//.then(log, console.error)
+  await deleteModel(model)
 }
 
 mongoose.disconnect()
