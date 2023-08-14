@@ -23,10 +23,16 @@ Some of features offer by **reQurse**:-
 ## Getting Start
 For a quick start you can check [samples](https://github.com/syarul/requrse/blob/main/samples) folder to see usage cases with [Mongoose](https://github.com/syarul/requrse/blob/main/samples/mongoose), [Redis](https://github.com/syarul/requrse/blob/main/samples/redis) and the [Starwars](https://github.com/syarul/requrse/blob/main/samples/starwars) examples.
 
-A basic usage of reQurse, you do not need to define model and all sorts of abstractions to fulfil the usage case.
-```js
+A basic usage of reQurse.
+```javascript
 import queryExec from 'requrse'
 
+queryExec(query, { methods, config })
+```
+- **query**: *(object)* ***required*** JSON like query.
+- **methods**: *(object)* ***required*** define methods/computed fields that exist in the query.
+- **config**: *(function)* ***optional*** extend and added parameterize control over methods.
+```js
 await queryExec({
   Test: {
     test: {
