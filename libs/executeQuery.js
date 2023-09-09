@@ -6,6 +6,7 @@ const getAlias = require('./getAlias')
 const getCurrentQueryArgs = require('./getCurrentQueryArgs')
 const buildArgs = require('./buildArgs')
 const merge = require('./mergeQuery')
+const mapResult = require('./mapResult')
 
 const executeQuery = async (query, currentQuery, { methods, config }, mergeQuery = {}) => {
   const [entries, buildEntries, resultQuery] = [Object.entries(query), [], []]
@@ -21,10 +22,10 @@ const executeQuery = async (query, currentQuery, { methods, config }, mergeQuery
         computed = true
         if (currentQuery instanceof Array && !equal(resultQuery, currentQuery)) {
           for (const obj of currentQuery) {
-            if(!$vParams && !params && !obj[key]) {
+            if (!$vParams && !params && !obj[key]) {
               resultQuery.push(compute.apply(mergeQuery, [obj]))
-            } else if($vParams && !params && !obj[key]) {
-              resultQuery.push(compute.apply(mergeQuery, [obj,  $vParams]))
+            } else if ($vParams && !params && !obj[key]) {
+              resultQuery.push(compute.apply(mergeQuery, [obj, $vParams]))
             } else {
               resultQuery.push(compute.apply(mergeQuery, buildArgs($vParams, params, { [key]: obj[key] })))
             }
@@ -58,14 +59,7 @@ const executeQuery = async (query, currentQuery, { methods, config }, mergeQuery
           if (!currentQuery && Object.entries(value) === result) {
             result = null
           } else {
-            result = result.map(([key, value]) => {
-              if (value instanceof Array) {
-                return [key, value]
-              } else if ((currentQuery || {})[key]) {
-                return [key, (currentQuery || {})[key]]
-              }
-              return null
-            })
+            result = mapResult(query, result, currentQuery)
           }
         } else {
           result = iterate(result, currentQuery)

@@ -5,18 +5,7 @@ Lightweight driven query language
 [![requrse CI](https://github.com/syarul/requrse/actions/workflows/main-ci.yml/badge.svg)](https://github.com/syarul/requrse/actions/workflows/main-ci.yml)
 
 ## What is reQurse
-Leveraging the principles of Decision Science, **reQurse** introduces an innovative approach that overcomes the complexities of CRUD operations. The focus is on delivering a streamlined and efficient CRUD library solution, simplifying API development, and effortlessly handling complex data management tasks. **reQurse** utilized JSON-based queries enables you to load data from external configuration files as your numbers of APIs grow, reducing code dependencies and mitigating the need to write lengthy procedural APIs. This approach promotes a modular and streamlined code structure, enhancing flexibility and maintainability.
-
-Some of features offer by **reQurse**:-
-- **On-Demand Data Retrieval**: Fetch only what you need, avoid loading large dataset in memory at once.
-- **Distributed Processing**: Or step-by-step processing, complex queries is broken down into smaller steps, you can process data incrementally avoiding excessive memory consumption.
-- **Memory Efficiency**: With limited data in memory at any given time, you can handle larger datasets and complex queries more efficiently.
-- **Custom Computations**: With custom computation methods, you can perform data aggregation, sorting, filter or other operations without relying on in-memory database operations.
-- **Dynamic Traversal**: The ability to traverse complex object models like JSON allows you to navigate data in a more flexible and adaptable manner.
-- **Enhanced Performance**: By fetching and processing data in smaller units, you can achieve better query performance and reduce processing time.
-- **Support for Multiple Endpoints**: Flexible enough to support multiple endpoints, allowing you to interact with various APIs or databases using the same query language. This streamlines your codebase and enables a consistent approach across different data sources.
-- **Portability and Migration** : Is straightforward. You only need to write the middleware for **reQurse**, avoiding the need to rewrite entire queries when migrating or switching databases or APIs. This makes the codebase more maintainable and adaptable to changes.
-- **Client-Side Querying** : **reQurse** offers portability, making it accessible to clients, thus reducing server-side processing. Clients can perform queries directly, enabling more client-based operations and minimizing the server's workload. On the server side, you may require a validation wrapper to ensure secure requests. Moreover, you can also control field results as needed, granting precise control over the data returned.
+**reQurse** introduces an innovative approach that overcomes the complexities of CRUD operations. The focus is on delivering a streamlined and efficient CRUD library solution, simplifying API development, and effortlessly handling complex data management tasks. **reQurse** utilized JSON-based queries enables you to load data from external configuration files as your numbers of APIs grow, reducing code dependencies and mitigating the need to write lengthy procedural APIs. This approach promotes a modular and streamlined code structure, enhancing flexibility and maintainability.
 
 > This library take some inspirations from NextQL and GraphQL
 
@@ -31,7 +20,7 @@ queryExec(query, { methods, config })
 ```
 - **query**: *(object)* ***required*** JSON like query.
 - **methods**: *(object)* ***required*** define methods/computed fields that exist in the query.
-- **config**: *(function)* ***optional*** extend and added parameterize control over methods.
+- **config**: *(object)* ***optional*** extend and added parameterize control over methods.
 ```js
 await queryExec({
   Test: {
