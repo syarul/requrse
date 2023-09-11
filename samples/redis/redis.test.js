@@ -4,7 +4,7 @@ require('dotenv').config()
 
 const requrseRedis = require('./redis.middleware')
 
-const redis = new Redis(`rediss://default:${process.env.REDIS_KEY}@${process.env.UPSTASH}`)
+const redis = new Redis(`rediss://default:${process.env.REDIS_KEY}@winning-calf-38455.upstash.io:38455`)
 
 const redisKey = 'books'
 const memberKey = 'books_ids'
