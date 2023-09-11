@@ -1,3 +1,4 @@
+//@ts-check
 const equal = require('deep-equal')
 const resolvePromises = require('./resolvePromises')
 const iterate = require('./iterate')
@@ -8,14 +9,35 @@ const buildArgs = require('./buildArgs')
 const merge = require('./mergeQuery')
 const mapResult = require('./mapResult')
 
-const executeQuery = async (query, currentQuery, { methods, config }, mergeQuery = {}) => {
-  const [entries, buildEntries, resultQuery] = [Object.entries(query), [], []]
+/**
+ * Options for query execution.
+ *
+ * @typedef {object} QueryOptions
+ * @property {object} methods - Methods configuration.
+ * @property {object} config - Configuration settings.
+ */
+
+/**
+ * Executes a query with the provided configuration.
+ *
+ * @param {object} query - The query object to execute.
+ * @param {object} currentQuery - The current query object.
+ * @param {QueryOptions} opts - The configuration object with methods and config function.
+ * @param {object} mergeQuery - The mergeQuery object (optional, defaults to an empty object).
+ * @returns {Promise<Array<[string, any]>>} A promise that resolves to an array of key-value pairs.
+ */
+const executeQuery = async (query, currentQuery, opts, mergeQuery = {}) => {
+  const { methods, config } = opts
+  const entries = Object.entries(query)
+  /** @type {any[]} */
+  const buildEntries = []
+  const resultQuery = []
   let params, alias, compute, args, $params, $vParams, result, computed, failedComputed
   for (let [key, value] of entries) {
     ;[key, alias] = getAlias('/', key)
     mergeQuery.key = mergeQuery.key || key // model cache support
     if (methods[key]) {
-      ;[compute, params] = computeMethod(compute, methods[key], params, config)
+      ;[compute, params] = computeMethod(methods[key], params, config)
       ;[args, $params, $vParams] = getCurrentQueryArgs(value, currentQuery, alias, params)
       mergeQuery = merge(mergeQuery, currentQuery)
       if (typeof compute === 'function' && $params.currentQuery && !$params.currentQuery[key]) {

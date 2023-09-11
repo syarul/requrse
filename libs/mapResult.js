@@ -1,3 +1,13 @@
+//@ts-check
+
+/**
+ * Maps the result based on query and currentQuery.
+ *
+ * @param {object} query - The query object.
+ * @param {Array<[string, any]>} result - The result to be mapped.
+ * @param {object} currentQuery - The current query object.
+ * @returns {Array<[string, any]>} The mapped result.
+ */
 const mapResult = (query, result, currentQuery) => {
   result = result.map(([key, value]) => {
     if (value instanceof Array) {
@@ -11,7 +21,7 @@ const mapResult = (query, result, currentQuery) => {
         return [key, Object.fromEntries(mapResult(dV, result, currentQuery[dK]))[key]]
       }
     }
-    return null
+    return [key, null]
   })
   return result
 }

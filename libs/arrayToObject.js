@@ -1,5 +1,12 @@
+//@ts-check
 const checkEntry = require('./checkEntry')
 
+/**
+ * Converts an array into an object recursively.
+ *
+ * @param {any[]} arr - The array to convert.
+ * @returns {object | object[]} An object or an array with converted values.
+ */
 const arrayToObject = (arr) => {
   if (Array.isArray(arr) && !checkEntry(arr)) {
     if (arr.length === 1 && Array.isArray(arr[0]) && checkEntry(arr[0])) {

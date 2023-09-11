@@ -33,20 +33,16 @@ queryExec({
   methods: {
     request: 'request'
   },
-  config: (param) => {
-    return ({
-      request: (url) => { 
-        return axios.get(url, {
-          cancelToken: cancelSource.token // Assign the cancel token to the request
-        })
-      }
-    })[param]
-  }
+  config: (param) => ({
+    request: (url) => axios.get(url, {
+      cancelToken: cancelSource.token // Assign the cancel token to the request
+    })
+  })[param]
 }).then(log, (error) => {
   assert.equal(error.message, 'Request canceled by user.')
 })
 
-// // Simulate cancellation after 10ms
+// Simulate cancellation after 10ms
 setTimeout(() => {
   cancelSource.cancel('Request canceled by user.') // Cancel the request
 }, 10)

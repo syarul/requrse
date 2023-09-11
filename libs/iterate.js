@@ -1,3 +1,12 @@
+//@ts-check
+
+/**
+ * Iterates through result and currentQuery and merge currentQuery properties into result.
+ *
+ * @param {Array<[string, any]>} result - The base query to iterate through.
+ * @param {object} currentQuery - The query result to iterate through.
+ * @returns {Array<[string, any]>} The iterated result.
+ */
 const iterate = (result, currentQuery) => {
   return currentQuery.map((query, i) => {
     const res = {}
