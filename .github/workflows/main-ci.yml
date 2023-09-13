@@ -30,7 +30,7 @@ jobs:
         run: echo "REDIS_KEY=${{ secrets.REDIS_KEY }}" >> .env
 
       - name: Test
-        run: npm test
+        run: npm run test:lcov
       
       - name: Coveralls
         uses: coverallsapp/github-action@master
