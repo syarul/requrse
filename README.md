@@ -6,7 +6,7 @@ Lightweight driven query language
 [![Coverage Status](https://coveralls.io/repos/github/syarul/requrse/badge.svg?branch=main)](https://coveralls.io/github/syarul/requrse?branch=main)
 
 ## What is reQurse
-**reQurse** introduces an innovative approach that overcomes the complexities of CRUD operations. The focus is on delivering a streamlined and efficient CRUD library solution, simplifying API development, and effortlessly handling complex data management tasks. **reQurse** utilized JSON-based queries enables you to load data from external configuration files as your numbers of APIs grow, reducing code dependencies and mitigating the need to write lengthy procedural APIs. This approach promotes a modular and streamlined code structure, enhancing flexibility and maintainability.
+**reQurse** introduces an innovative approach that overcomes the complexities of CRUD operations. The focus is on delivering a streamlined and efficient CRUD library solution, simplifying API development, and effortlessly handling complex data management tasks. **reQurse** utilized JSON-based queries, allows multi-tenant API sources, avoid writing lengthy procedural APIs and truly embrace Javascript core philosophy as OOP language. This approach promotes a modular and streamlined code structure, retaining the complexity of `Object` tree while enhancing flexibility and maintainability.
 
 > This library take some inspirations from NextQL and GraphQL
 
@@ -82,6 +82,37 @@ await queryExec({
   }
 }).then(console.log, console.error)
 // { Test: { test: { person: { name: 'Bar', age: 30 } } } }
+```
+Not limited to database queries, you can also manage API endpoints too
+```js
+queryExec({
+  Test: {
+    test: {
+      request: {
+        $params: {
+          url: 'https://api.github.com/users/douglascrockford'
+        },
+        status: 1,
+        data: {
+          id: 1,
+          login: 1
+        }
+      },
+    }
+  }
+},
+{
+  methods: {
+    request: (url) => axios.get(url)
+  }
+}).then(console.log, console.error)
+// {
+//   Test: {
+//     test: {
+//       request: { status: 200, data: { id: 262641, login: 'douglascrockford' } }
+//     }
+//   }
+// }
 ```
 
 You can add options `config` to map methods with different name. This allow a consistent structure of the query.
