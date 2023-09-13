@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-check
 
 /**
  * Checks if an object is an associative object (not an array) and removes undefined values.

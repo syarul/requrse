@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-check
 
 /**
  * Checks if a value is an array of arrays with a specific structure.

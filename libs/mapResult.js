@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-check
 
 /**
  * Maps the result based on query and currentQuery.

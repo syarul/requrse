@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-check
 const executeQuery = require('./executeQuery')
 const arrayToObject = require('./arrayToObject')
 

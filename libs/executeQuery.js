@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-check
 const equal = require('deep-equal')
 const resolvePromises = require('./resolvePromises')
 const iterate = require('./iterate')
@@ -44,9 +44,7 @@ const executeQuery = async (query, currentQuery, opts, mergeQuery = {}) => {
         computed = true
         if (currentQuery instanceof Array && !equal(resultQuery, currentQuery)) {
           for (const obj of currentQuery) {
-            if (!$vParams && !params && !obj[key]) {
-              resultQuery.push(compute.apply(mergeQuery, [obj]))
-            } else if ($vParams && !params && !obj[key]) {
+            if ($vParams && !params && !obj[key]) {
               resultQuery.push(compute.apply(mergeQuery, [obj, $vParams]))
             } else {
               resultQuery.push(compute.apply(mergeQuery, buildArgs($vParams, params, { [key]: obj[key] })))
@@ -77,12 +75,8 @@ const executeQuery = async (query, currentQuery, opts, mergeQuery = {}) => {
       currentQuery = await resolvePromises(currentQuery)
       result = await executeQuery(value, currentQuery, { methods, config }, mergeQuery)
       if (currentQuery) {
-        if (!(currentQuery instanceof Array)) {
-          if (!currentQuery && Object.entries(value) === result) {
-            result = null
-          } else {
-            result = mapResult(query, result, currentQuery)
-          }
+        if (!(currentQuery instanceof Array) && currentQuery && Object.entries(value) !== result) {
+          result = mapResult(query, result, currentQuery)
         } else {
           result = iterate(result, currentQuery)
         }

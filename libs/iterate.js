@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-check
 
 /**
  * Iterates through result and currentQuery and merge currentQuery properties into result.

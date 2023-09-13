@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-check
 
 /**
  * Splits a string using a symbol.

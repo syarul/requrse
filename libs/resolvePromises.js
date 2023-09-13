@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-check
 
 /**
  * Resolves an array of promises or a single promise.
