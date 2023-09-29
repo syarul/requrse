@@ -26,10 +26,13 @@ const catcher = (e) => e(this)
  * @param {QueryOptions} opts - Options for query execution.
  * @returns {Promise<object>} A promise that resolves to the result object.
  */
-module.exports = (query, opts) => {
+const rq = (query, opts) => {
   try {
     return executeQuery(query, null, opts).then(arrayToObject)
   } catch (error) {
     return catcher.bind(error)
   }
 }
+
+exports.rq = rq
+module.exports = rq
