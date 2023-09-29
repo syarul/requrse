@@ -71,6 +71,9 @@ const executeQuery = async (query, currentQuery, opts, mergeQuery = {}) => {
     if (alias) {
       key = `${key}/${alias}`
     }
+    if(currentQuery instanceof Promise) {
+      currentQuery = await currentQuery
+    }
     if (value instanceof Object) {
       currentQuery = await resolvePromises(currentQuery)
       result = await executeQuery(value, currentQuery, { methods, config }, mergeQuery)
