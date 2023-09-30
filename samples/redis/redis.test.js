@@ -124,6 +124,21 @@ async function test () {
     })
   }, console.error)
 
+  await requrseRedis({
+    book: {
+      getMemberKeys: '*'
+    }
+  }, modelOptions).then(result => {
+    console.log(result)
+    assert.deepEqual(result, {
+      book: {
+        getMemberKeys: {
+          keys: ['0', '1']
+        }
+      }
+    })
+  }, console.error)
+
   for (const key of keys) {
     await remove(key).then(console.log, console.error)
   }

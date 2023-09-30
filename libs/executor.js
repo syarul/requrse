@@ -34,5 +34,8 @@ const rq = (query, opts) => {
   }
 }
 
+global.rq = rq
 exports.rq = rq
 module.exports = rq
+module.exports.default = rq
+

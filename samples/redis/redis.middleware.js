@@ -57,7 +57,8 @@ module.exports = (query, { redis, redisKey, memberKey }) => queryExec(query, {
         return newData
       },
       async getMemberKeys () {
-        return { keys: await redis.smembers(memberKey) }
+
+        return { keys: (await redis.smembers(memberKey)).sort() }
       },
       async remove ({ id }) {
         const [, ...secondaryKeys] = [].slice.call(arguments).pop()

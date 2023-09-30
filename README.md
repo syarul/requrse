@@ -17,15 +17,15 @@ You can check [samples](https://github.com/syarul/requrse/blob/main/samples) fol
 
 A basic usage of reQurse.
 ```javascript
-import queryExec from 'requrse'
+import rq from 'requrse'
 
-queryExec(query, { methods, config })
+rq(query, { methods, config })
 ```
 - **query**: *(object)* ***required*** JSON like query.
 - **methods**: *(object)* ***required*** define methods/computed fields that exist in the query.
 - **config**: *(object)* ***optional*** extend and added parameterize control over methods.
 ```js
-await queryExec({
+await rq({
   Test: {
     test: {
       greeting: '*'
@@ -44,7 +44,7 @@ await queryExec({
 
 By default methods will automatically resolve promises.
 ```js
-await queryExec({
+await rq({
   Test: {
     test: {
       person: {
@@ -65,7 +65,7 @@ await queryExec({
 
 You can pass arguments using `$params` parameter.
 ```js
-await queryExec({
+await rq({
   Test: {
     test: {
       person: {
@@ -87,7 +87,7 @@ await queryExec({
 ```
 Not limited to database queries, you can also manage API endpoints too
 ```js
-queryExec({
+rq({
   Test: {
     test: {
       request: {
@@ -119,7 +119,7 @@ queryExec({
 
 You can add options `config` to map methods with different name. This allow a consistent structure of the query.
 ```js
-await queryExec({
+await rq({
   Test: {
     test: {
       person: {
@@ -145,7 +145,7 @@ await queryExec({
 
 With `config` you can specify custom parameter to map result or use it as input for your methods.
 ```js
-await queryExec({
+await rq({
   Test: {
     test: {
       occupation: 1,
@@ -190,7 +190,7 @@ await queryExec({
 
 The query tree is resolve recursively, so you can have very complex query structure.
 ```js
-await queryExec({
+await rq({
   Test: {
     test: {
       person: {
