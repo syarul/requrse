@@ -71,8 +71,8 @@ const executeQuery = async (query, currentQuery, opts, mergeQuery = {}) => {
     if (alias) {
       key = `${key}/${alias}`
     }
+    currentQuery = await resolvePromises(currentQuery)
     if (value instanceof Object) {
-      currentQuery = await resolvePromises(currentQuery)
       result = await executeQuery(value, currentQuery, { methods, config }, mergeQuery)
       if (currentQuery) {
         if (!(currentQuery instanceof Array) && currentQuery && Object.entries(value) !== result) {
@@ -88,7 +88,6 @@ const executeQuery = async (query, currentQuery, opts, mergeQuery = {}) => {
       }
       buildEntries.push([key, result])
     } else {
-      currentQuery = await resolvePromises(currentQuery)
       // resolved scalar/non-scalar value, and consequently same types
       buildEntries.push([key, typeof currentQuery === typeof value ? currentQuery : value === '*' ? currentQuery : value])
     }
