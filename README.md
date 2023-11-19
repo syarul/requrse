@@ -13,7 +13,6 @@ Here's the first example to get you started. [Try it here](https://codepen.io/sy
 > This library take some inspirations from NextQL and GraphQL
 
 ## Usage
-You can check [samples](https://github.com/syarul/requrse/blob/main/samples) folder to see usage cases with [Mongoose](https://github.com/syarul/requrse/blob/main/samples/mongoose), [Redis](https://github.com/syarul/requrse/blob/main/samples/redis) and the [Starwars](https://github.com/syarul/requrse/blob/main/samples/starwars) examples.
 
 A basic usage of reQurse.
 ```javascript
@@ -42,214 +41,136 @@ await rq({
 // { Test: { test: { greeting: 'hello world' } } }
 ```
 
-By default methods will automatically resolve promises.
+A proper query should do more than just this, to demystify the capability of this library, create a few data samples
+
 ```js
+const acolyte = { id: '0', progression: ['1', '4'], name: 'Acolyte' }
+const priest = { id: '1', progression: ['4'], name: 'Priest' }
+const squire = { id: '2', progression: ['3', '4'], name: 'Squire' }
+const paladin = { id: '3', progression: ['4'], name: 'Paladin' }
+const inquisitor = { id: '4', progression: [], name: 'Inquisitor' }
+
+// we also create the relation between them
+const supportData = {
+  0: acolyte,
+  1: priest,
+  4: inquisitor
+}
+
+const vanguardData = {
+  2: squire,
+  3: paladin,
+  4: inquisitor
+}
+```
+
+Then the helper functions to access these data
+```js
+/**
+ * Helper function to get a class by ID.
+ */
+function getClass (id) {
+  // Returning a promise just to illustrate query support.
+  return Promise.resolve(supportData[id] || vanguardData[id])
+}
+/**
+ * Allows us to query for a classes's progression.
+ */
+function getProgression (classes) {
+  return classes.progression.map(id => getClass(id))
+}
+/**
+ * Allows us to query for the support class with the given id.
+ */
+function getSupport (id) {
+  return supportData[id]
+}
+/**
+ * Allows us to query for the vanguard class with the given id.
+ */
+function getVanguard (id) {
+  return vanguardData[id]
+}
+/**
+ * Allows us to query for the player class by gameId.
+ */
+function getPlayer (gameId) {
+  if (gameId === 0) {
+    return acolyte
+  }
+  return inquisitor
+}
+```
+
+Then configure `requrse` to use these methods
+```js
+const config = (param) => ({
+  getPlayer, getClass, getProgression, getSupport, getVanguard
+}[param])
+
+const methods = {
+  player: 'getPlayer',
+  class: 'getClass',
+  progression: 'getProgression',
+  support: 'getSupport',
+  vanguard: 'getVanguard'
+}
+
 await rq({
-  Test: {
-    test: {
-      person: {
+  class: {
+    player: {
+      name: 1
+    }
+  }
+}, { methods, config }).then(console.log)
+// { class: { player: { name: 'Inquisitor' } } }
+
+await rq({
+  class: {
+    player: {
+      $params: { gameId: 0 },
+      name: 1
+    }
+  }
+}, { methods, config }).then(console.log)
+// { class: { player: { name: 'Acolyte' } } }
+
+await rq({
+  class: {
+    player: {
+      $params: { gameId: 0 },
+      id: 1,
+      name: 1,
+      progression: {
         name: 1
       }
     }
   }
-},
-{
-  methods: {
-    person () {
-      return Promise.resolve({ name: 'Foo', age: 12 })
-    }
-  }
-}).then(console.log, console.error)
-// { Test: { test: { person: { name: 'Foo' } } } }
-```
-
-You can pass arguments using `$params` parameter.
-```js
-await rq({
-  Test: {
-    test: {
-      person: {
-        $params: { name: 'Bar', age: 30 },
-        name: 1,
-        age: 1
-      }
-    }
-  }
-},
-{
-  methods: {
-    person (name, age) {
-      return { name, age }
-    }
-  }
-}).then(console.log, console.error)
-// { Test: { test: { person: { name: 'Bar', age: 30 } } } }
-```
-Not limited to database queries, you can also manage API endpoints too
-```js
-rq({
-  Test: {
-    test: {
-      request: {
-        $params: {
-          url: 'https://api.github.com/users/douglascrockford'
-        },
-        status: 1,
-        data: {
-          id: 1,
-          login: 1
-        }
-      },
-    }
-  }
-},
-{
-  methods: {
-    request: (url) => axios.get(url)
-  }
-}).then(console.log, console.error)
+}, { methods, config }).then(console.log)
 // {
-//   Test: {
-//     test: {
-//       request: { status: 200, data: { id: 262641, login: 'douglascrockford' } }
+//   class: {
+//     player: {
+//       id: '0',
+//       name: 'Acolyte',
+//       progression: [
+//         { name: 'Priest' },
+//         { name: 'Inquisitor' }
+//       ]
 //     }
 //   }
 // }
-```
 
-You can add options `config` to map methods with different name. This allow a consistent structure of the query.
-```js
 await rq({
-  Test: {
-    test: {
-      person: {
-        $params: { age: 30 },
-        name: 1,
-        age:1
-      }
+  vanguard: {
+    'vanguard/paladin': {
+      $params: { id: 3 },
+      name: 1
     }
   }
-},
-{
-  methods: {
-    person: 'getPerson'
-  },
-  config: (param) => ({
-    getPerson (age) {
-      return { name: 'Foo', age }
-    }
-  })[param]
-}).then(console.log, console.error)
-// { Test: { test: { person: { name: 'Foo', age: 30 } } } }
+}, { methods, config }).then(console.log)
+// { vanguard: { 'vanguard/paladin': { name: 'Paladin' } } }
 ```
 
-With `config` you can specify custom parameter to map result or use it as input for your methods.
-```js
-await rq({
-  Test: {
-    test: {
-      occupation: 1,
-      person: {
-        $params: { age: 30 },
-        name: 1,
-        age:1,
-        occupation: 1
-      }
-    }
-  }
-},
-{
-  methods: {
-    occupation(){
-      return { type: 'Copywriter', started: '2020', city: 'NY' }
-    },
-    // 'type' is custom key where methods have access to them as arguments, you can add multiple keys with '|'
-    person: 'getPerson,type'
-  },
-  config: (param) => ({
-    getPerson (occupation, { age }, [ $param ]) {
-      return { 
-        name: 'Foo', 
-        age, 
-        occupation: {
-          [$param]: occupation[$param]
-        }
-      }
-    }
-  })[param]
-}).then(console.log, console.error)
-// {
-//   Test: {
-//     test: {
-//       occupation: 1,
-//       person: { name: 'Foo', age: 30, occupation: { type: 'Copywriter' } }
-//     }
-//   }
-// }
-```
 
-The query tree is resolve recursively, so you can have very complex query structure.
-```js
-await rq({
-  Test: {
-    test: {
-      person: {
-        $params: { name: 'Foo' },
-        name: 1,
-        age:1,
-        birth: {
-          year: 1,
-          area: {
-            city: 1
-          }
-        },
-        occupation: {
-          type: 1,
-        },
-      }
-    }
-  }
-},
-{
-  methods: {
-    area: 'area',
-    occupation: 'occupation',
-    person: 'getPerson',
-    birth: 'birth'
-  },
-  config: (param) => ({
-    area() {
-      return { city: 'NY' }
-    },
-    occupation () { 
-      return { type: 'CT0' }
-    },
-    birth () { 
-      return { year: '1981' }
-    },
-    getPerson (name) {
-      return { name, age: 42 }
-    }
-  })[param]
-}).then(console.log, console.error)
-// {
-//   Test: {
-//     test: {
-//       person: {
-//         name: 'Foo',
-//         age: 42,
-//         birth: { year: '1981', area: { city: 'NY' } },
-//         occupation: { type: 'CT0' }
-//       }
-//     }
-//   }
-// }
-```
-
-## Sample usage with lookup table and model caching
-
-Using **reQurse** for lookup queries offers greater flexibility and memory efficiency compared to the standard database lookup method. With reQurse, you can avoid resource exhaustion issues like timeouts, especially when dealing with complex data structures and custom projections. To see an implementation example, check out the [Mongoose Lookup](https://github.com/syarul/requrse/blob/main/samples/mongoose/mongoose-lookup.test.mjs) sample.
-
-Additionally, **reQurse** provides support for model caching, eliminating the need to repeatedly declare the model for each query. This caching feature streamlines your querying process. For a practical use case, refer to the [Mongoose Middleware](https://github.com/syarul/requrse/blob/main/samples/mongoose/mongoose.middleware.js) query for usage case.
-
-> P/S: If your Entity-Relationship Diagram (ERD) is massive and you anticipate having more, it's better to convert your queries into JSON format and store them elsewhere, for example, in a Redis database or AWS DynamoDB.
+## Samples
+You can check [samples](https://github.com/syarul/requrse/blob/main/samples) folder to see more usage cases with [Mongoose](https://github.com/syarul/requrse/blob/main/samples/mongoose), [Redis](https://github.com/syarul/requrse/blob/main/samples/redis) and the [Starwars](https://github.com/syarul/requrse/blob/main/samples/starwars) examples.
