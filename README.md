@@ -267,23 +267,21 @@ await rq({
 //     player: {
 //       name: "Acolyte",
 //       inventory: [
-//         [
-//           {
-//             id: "0",
-//             name: "Healing Potion",
-//             count: 7
-//           },
-//           {
-//             id: "1",
-//             name: "Bandage",
-//             count: 1
-//           },
-//           {
-//             id: "2",
-//             name: "Holy Water",
-//             count: 0
-//           }
-//         ]
+//         {
+//           id: "0",
+//           name: "Healing Potion",
+//           count: 7
+//         },
+//         {
+//           id: "1",
+//           name: "Bandage",
+//           count: 1
+//         },
+//         {
+//           id: "2",
+//           name: "Holy Water",
+//           count: 0
+//         }
 //       ]
 //     }
 //   }
