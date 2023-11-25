@@ -1,13 +1,14 @@
 {
   "name": "@syarul/requrse",
-  "version": "0.2.3",
+  "version": "0.2.4",
+  "type": "module",
   "description": "Lightweight driven query language",
-  "main": "libs/executor.js",
+  "main": "libs/executor.cjs",
   "scripts": {
-    "test:starwars": "node samples/starwars/starwars.test.js",
+    "test:starwars": "node samples/starwars/starwars.test.mjs",
     "test:mongoose": "node samples/mongoose/mongoose.test.mjs",
     "test:mongoose-lookup": "node samples/mongoose/mongoose-lookup.test.mjs",
-    "test:redis": "node samples/redis/redis.test.js",
+    "test:redis": "node samples/redis/redis.test.mjs",
     "test:requrse": "node test/requrse.test.mjs",
     "test:inflight-request-cancelation": "node test/inflightRequestCancelation.test.mjs",
     "test:dems": "node test/dems.test.mjs",

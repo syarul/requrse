@@ -1,6 +1,5 @@
-const queryExec = require('../../libs/executor')
-
-const starwarsData = require('./starwarsData.js')
+import rq from '../../libs/executor.cjs'
+import * as starwarsData from './starwarsData.cjs'
 
 const config = (param) => starwarsData[param]
 
@@ -14,4 +13,6 @@ const methods = {
   }
 }
 
-module.exports = (query) => queryExec(query, { methods, config })
+const middleware = (query) => rq(query, { methods, config })
+
+export default middleware

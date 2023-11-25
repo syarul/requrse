@@ -1,11 +1,6 @@
 import assert from 'assert'
 import mongoose from 'mongoose'
-
-import { createRequire } from 'module'
-
-const require = createRequire(import.meta.url)
-
-const requrseMongoose = require('./mongoose.middleware')
+import requrseMongoose from './mongoose.middleware.mjs'
 
 mongoose.Promise = global.Promise
 

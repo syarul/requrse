@@ -1,19 +1,15 @@
 import axios from 'axios'
 import assert from 'assert'
-import { createRequire } from 'module'
+import rq from '../libs/executor.cjs'
 
-const require = createRequire(import.meta.url)
-
-const queryExec = require('../libs/executor')
-
-const log = (d) => console.log(require('util').inspect(d, false, 9, true))
+const log = (d) => console.log(util.inspect(d, false, 9, true))
 
 const { CancelToken } = axios
 
 // Create a cancel token source
 const cancelSource = CancelToken.source()
 
-queryExec({
+rq({
   Test: {
     test: {
       request: {

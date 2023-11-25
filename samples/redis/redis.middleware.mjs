@@ -1,6 +1,6 @@
-const queryExec = require('../../libs/executor')
+import rq from '../../libs/executor.cjs'
 
-module.exports = (query, { redis, redisKey, memberKey }) => queryExec(query, {
+const middleware = (query, { redis, redisKey, memberKey }) => rq(query, {
   methods: {
     get: 'get,id',
     find: 'find,query',
@@ -80,3 +80,5 @@ module.exports = (query, { redis, redisKey, memberKey }) => queryExec(query, {
     return (redisMethods)[param]
   }
 })
+
+export default middleware

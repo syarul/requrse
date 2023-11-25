@@ -1,5 +1,5 @@
 // @ts-check
-const checkEntry = require('./checkEntry')
+const checkEntry = require('./checkEntry.cjs')
 
 /**
  * Converts an array into an object recursively.

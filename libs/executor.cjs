@@ -1,6 +1,6 @@
 // @ts-check
-const executeQuery = require('./executeQuery')
-const arrayToObject = require('./arrayToObject')
+const executeQuery = require('./executeQuery.cjs')
+const arrayToObject = require('./arrayToObject.cjs')
 
 /**
  * Error catcher function.

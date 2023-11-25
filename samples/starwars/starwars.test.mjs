@@ -1,5 +1,5 @@
-const assert = require('assert')
-const requrseExec = require('./starwars.middleware')
+import assert from 'assert'
+import requrseExec from './starwars.middleware.mjs'
 
 const testList = [
   0,
