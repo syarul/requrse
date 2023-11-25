@@ -1,12 +1,9 @@
-import { createRequire } from 'module'
+import rq from '../libs/executor.cjs'
+import util from 'util'
 
-const require = createRequire(import.meta.url)
+const log = (d) => console.log(util.inspect(d, false, 9, true))
 
-const queryExec = require('../libs/executor')
-
-const log = (d) => console.log(require('util').inspect(d, false, 9, true))
-
-await queryExec({
+await rq({
   Test: {
     test: {
       greeting: '*'
@@ -21,7 +18,7 @@ await queryExec({
   }
 }).then(log, console.error)
 
-await queryExec({
+await rq({
   Test: {
     test: {
       person: {
@@ -38,7 +35,7 @@ await queryExec({
   }
 }).then(log, console.error)
 
-await queryExec({
+await rq({
   Test: {
     test: {
       person: {
@@ -57,7 +54,7 @@ await queryExec({
   }
 }).then(log, console.error)
 
-await queryExec({
+await rq({
   Test: {
     test: {
       person: {
@@ -79,7 +76,7 @@ await queryExec({
   })[param]
 }).then(log, console.error)
 
-await queryExec({
+await rq({
   Test: {
     test: {
       occupation: 1,
@@ -112,7 +109,7 @@ await queryExec({
   })[param]
 }).then(log, console.error)
 
-await queryExec({
+await rq({
   Test: {
     test: {
       person: {

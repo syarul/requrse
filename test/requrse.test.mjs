@@ -1,12 +1,6 @@
 import assert from 'assert'
-
-import { createRequire } from 'module'
-
-const require = createRequire(import.meta.url)
-
-const queryExec = require('../libs/executor')
-
-const fs = require('fs')
+import rq from '../libs/executor.cjs'
+import fs from 'fs'
 
 const file = './test/data.json'
 
@@ -64,7 +58,7 @@ const methods = {
   addedAge: 'addedAge,age'
 }
 
-await queryExec({
+await rq({
   Test: {
     test: {
       hello: {
@@ -82,7 +76,7 @@ await queryExec({
   })
 }, console.error)
 
-await queryExec({
+await rq({
   Test: {
     test: {
       foo: 1
@@ -98,7 +92,7 @@ await queryExec({
   })
 }, console.error)
 
-await queryExec({
+await rq({
   Test: {
     test: {
       bar: 1
@@ -114,7 +108,7 @@ await queryExec({
   })
 }, console.error)
 
-await queryExec({
+await rq({
   Test: {
     test: {
       ber: 1
@@ -131,7 +125,7 @@ await queryExec({
 }, console.error)
 
 // // test deep query
-await queryExec({
+await rq({
   Test: {
     test: {
       person: {
@@ -158,7 +152,7 @@ await queryExec({
 }, console.error)
 
 // // test non-scalar query
-await queryExec({
+await rq({
   Test: {
     test: {
       person: '*'
@@ -178,7 +172,7 @@ await queryExec({
 }, console.error)
 
 // test recurrence query
-await queryExec({
+await rq({
   Test: {
     test: {
       recurrentPerson: '*'
@@ -198,7 +192,7 @@ await queryExec({
 }, console.error)
 
 // test data immutable method
-await queryExec({
+await rq({
   Test: {
     test: {
       data: '*',
@@ -241,7 +235,7 @@ await queryExec({
 }, console.error)
 
 // test data immutable method
-await queryExec({
+await rq({
   Test: {
     test: {
       person: {

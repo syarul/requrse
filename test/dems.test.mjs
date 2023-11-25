@@ -1,8 +1,4 @@
-import { createRequire } from 'module'
-
-const require = createRequire(import.meta.url)
-
-const rq = require('../libs/executor')
+import rq from '../libs/executor.cjs'
 
 const acolyte = { id: '0', progression: ['1', '4'], name: 'Acolyte' }
 const priest = { id: '1', progression: ['4'], name: 'Priest' }
