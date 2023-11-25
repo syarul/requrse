@@ -238,6 +238,22 @@ function getInventory ({ id }) {
 
 Extends the requrse methods/config
 ```js
+const extConfig = {
+  methods: {
+    ...methods,
+    item: 'getItem',
+    inventory: 'getInventory'
+  },
+  config: (param) => ({
+    ...confParams,
+    getItem,
+    getInventory
+  })[param]
+}
+```
+
+Now see how it perform!
+```js
 await rq({
   PlayerClass: {
     player: {
@@ -250,18 +266,7 @@ await rq({
       }
     }
   }
-}, {
-  methods: {
-    ...methods,
-    item: 'getItem',
-    inventory: 'getInventory',
-  },
-  config: (param) => ({
-    ...confParams,
-    getItem,
-    getInventory
-  })[param]
-}).then(console.log)
+}, extConfig).then(console.log)
 // {
 //   PlayerClass: {
 //     player: {

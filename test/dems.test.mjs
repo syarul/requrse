@@ -174,15 +174,7 @@ function getInventory ({ id }) {
   return inventoryData[id].map(getItem)
 }
 
-await rq({
-  PlayerClass: {
-    player: {
-      $params: { gameId: 0 },
-      name: 1,
-      inventory: '*'
-    }
-  }
-}, {
+const extConfig = {
   methods: {
     ...methods,
     item: 'getItem',
@@ -193,7 +185,17 @@ await rq({
     getItem,
     getInventory
   })[param]
-}).then(console.log)
+}
+
+await rq({
+  PlayerClass: {
+    player: {
+      $params: { gameId: 0 },
+      name: 1,
+      inventory: '*'
+    }
+  }
+}, extConfig).then(console.log)
 // {
 //   PlayerClass: {
 //     player: {
