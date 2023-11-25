@@ -9,7 +9,7 @@ const checkEntry = require('./checkEntry')
  */
 const arrayToObject = (arr) => {
   if (Array.isArray(arr) && !checkEntry(arr)) {
-    if (arr.length === 1 && Array.isArray(arr[0]) && checkEntry(arr[0])) {
+    if (arr.length === 1 && Array.isArray(arr[0])/*  && checkEntry(arr[0]) */) {
       return arrayToObject(arr.flat())
     }
     return arr.map(arrayToObject)

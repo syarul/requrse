@@ -25,7 +25,7 @@ queryExec({
           id: 1,
           login: 1
         }
-      },
+      }
     }
   }
 },

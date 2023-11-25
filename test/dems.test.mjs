@@ -183,25 +183,21 @@ await rq({
     player: {
       $params: { gameId: 0 },
       name: 1,
-      inventory: {
-        id: 1,
-        name: 1,
-        count: 1
-      }
+      inventory: '*'
     }
   }
 }, {
   methods: {
     ...methods,
     item: 'getItem',
-    inventory: 'getInventory',
+    inventory: 'getInventory'
   },
   config: (param) => ({
     ...confParams,
     getItem,
     getInventory
   })[param]
-}).then(r => console.log(JSON.stringify(r, null, 2)))
+}).then(console.log)
 // {
 //   PlayerClass: {
 //     player: {

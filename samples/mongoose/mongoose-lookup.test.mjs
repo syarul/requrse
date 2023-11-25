@@ -130,12 +130,10 @@ await lookup({ country_code: 'US' }).then(result => {
       find: {
         country_name: 'USA',
         population: 331000000,
-        lookup: [
-          {
-            city_name: 'Washington D.C.',
-            population: 700000
-          }
-        ]
+        lookup:{
+          city_name: 'Washington D.C.',
+          population: 700000
+        }
       }
     }
   }, 'Should return result with lookup table')
@@ -147,12 +145,10 @@ await lookup({ country_code: 'CA' }).then(result => {
       find: {
         country_name: 'Canada',
         population: 38000000,
-        lookup: [
-          {
+        lookup: {
             city_name: 'Ottawa',
             population: 1000000
-          }
-        ]
+        }
       }
     }
   }, 'Should return result with lookup table')
