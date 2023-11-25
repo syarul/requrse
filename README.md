@@ -41,7 +41,8 @@ await rq({
 // { Test: { test: { greeting: 'hello world' } } }
 ```
 
-A proper query should do more than just this, to demystify the capability of this library, create a few data samples
+## Advance usage
+A proper query should do more, to demystify the capability of this library, create a few data samples, you can imagine this as a setup that your database may have.
 
 ```js
 const acolyte = { id: '0', progression: ['1', '4'], name: 'Acolyte' }
@@ -50,7 +51,7 @@ const squire = { id: '2', progression: ['3', '4'], name: 'Squire' }
 const paladin = { id: '3', progression: ['4'], name: 'Paladin' }
 const inquisitor = { id: '4', progression: [], name: 'Inquisitor' }
 
-// we also create the relation between them
+// we also create the relations between them
 const supportData = {
   0: acolyte,
   1: priest,
@@ -104,9 +105,11 @@ function getPlayer (gameId) {
 
 Then configure `requrse` to use these methods
 ```js
-const config = (param) => ({
+const confParams = {
   getPlayer, getClass, getProgression, getSupport, getVanguard
-}[param])
+}
+
+const config = (param) => confParams[param]
 
 const methods = {
   player: 'getPlayer',
@@ -115,28 +118,37 @@ const methods = {
   support: 'getSupport',
   vanguard: 'getVanguard'
 }
+```
 
+Simple usage
+```js
 await rq({
-  class: {
+  PlayerClass: {
     player: {
       name: 1
     }
   }
 }, { methods, config }).then(console.log)
-// { class: { player: { name: 'Inquisitor' } } }
+// { PlayerClass: { player: { name: 'Inquisitor' } } }
+```
 
+Use `$params` to filter result
+```js
 await rq({
-  class: {
+  PlayerClass: {
     player: {
       $params: { gameId: 0 },
       name: 1
     }
   }
 }, { methods, config }).then(console.log)
-// { class: { player: { name: 'Acolyte' } } }
+// { PlayerClass: { player: { name: 'Acolyte' } } }
+```
 
+Optimize your query by writing efficient methods, i.e., here `progression` return the class next progression seamlessly
+```js
 await rq({
-  class: {
+  PlayerClass: {
     player: {
       $params: { gameId: 0 },
       id: 1,
@@ -148,7 +160,7 @@ await rq({
   }
 }, { methods, config }).then(console.log)
 // {
-//   class: {
+//   PlayerClass: {
 //     player: {
 //       id: '0',
 //       name: 'Acolyte',
@@ -159,18 +171,124 @@ await rq({
 //     }
 //   }
 // }
+```
 
+You can have multiple same dataset key name by `/` naming
+```js
 await rq({
   vanguard: {
     'vanguard/paladin': {
       $params: { id: 3 },
       name: 1
+    },
+    'vanguard/inquisitor': {
+      $params: { id: 4 },
+      name: 1
     }
   }
 }, { methods, config }).then(console.log)
-// { vanguard: { 'vanguard/paladin': { name: 'Paladin' } } }
+// {
+//   vanguard: {
+//     'vanguard/paladin': { name: 'Paladin' },
+//     'vanguard/inquisitor': { name: 'Inquisitor' }
+//   }
+// }
 ```
 
+Now we expand the dataset to the inventory of the player
+```js
+const healingPotion = { id: '0', effect: 'heal', dmg: 4, name: 'Healing Potion' }
+const bandage = { id: '1', effect: 'heal', dmg: 1, name: 'Bandage' }
+const holyWater = { id: '2', effect: 'cleansing', dmg: 2, name: 'Holy Water' }
 
-## Samples
+// add relations to the inventory data
+const itemData = {
+  0: healingPotion,
+  1: bandage,
+  2: holyWater
+}
+
+// add relations to how many each class have these items in their inventory
+const inventoryData = {
+  0: [7, 1, 0],
+  1: [3, 2, 2],
+  2: [0, 5, 0],
+  3: [1, 6, 2],
+  4: [0, 0, 10]
+}
+```
+
+Demonstrate usage of method/computed field to return value that you need, in this case `count` which came from a relational collection that store the value only, you can use such logic to build a powerful query for your api.
+```js
+/**
+ * Helper function to get a item by ID.
+ */
+function getItem (count, id) {
+  // Returning a promise just to illustrate query support.
+  return Promise.resolve({ ...itemData[id], count })
+}
+
+/**
+ * Allows us to query for the player class inventoryData.
+ */
+function getInventory ({ id }) {
+  return inventoryData[id].map(getItem)
+}
+```
+
+Extends the requrse methods/config
+```js
+await rq({
+  PlayerClass: {
+    player: {
+      $params: { gameId: 0 },
+      name: 1,
+      inventory: {
+        id: 1,
+        name: 1,
+        count: 1
+      }
+    }
+  }
+}, {
+  methods: {
+    ...methods,
+    item: 'getItem',
+    inventory: 'getInventory',
+  },
+  config: (param) => ({
+    ...confParams,
+    getItem,
+    getInventory
+  })[param]
+}).then(console.log)
+// {
+//   PlayerClass: {
+//     player: {
+//       name: "Acolyte",
+//       inventory: [
+//         [
+//           {
+//             id: "0",
+//             name: "Healing Potion",
+//             count: 7
+//           },
+//           {
+//             id: "1",
+//             name: "Bandage",
+//             count: 1
+//           },
+//           {
+//             id: "2",
+//             name: "Holy Water",
+//             count: 0
+//           }
+//         ]
+//       ]
+//     }
+//   }
+// }
+```
+
+## More Samples
 You can check [samples](https://github.com/syarul/requrse/blob/main/samples) folder to see more usage cases with [Mongoose](https://github.com/syarul/requrse/blob/main/samples/mongoose), [Redis](https://github.com/syarul/requrse/blob/main/samples/redis) and the [Starwars](https://github.com/syarul/requrse/blob/main/samples/starwars) examples.
