@@ -1,6 +1,6 @@
 {
   "name": "@syarul/requrse",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "type": "module",
   "description": "Lightweight driven query language",
   "main": "libs/executor.cjs",
@@ -11,9 +11,9 @@
     "test:redis": "node samples/redis/redis.test.mjs",
     "test:requrse": "node test/requrse.test.mjs",
     "test:inflight-request-cancelation": "node test/inflightRequestCancelation.test.mjs",
-    "test:dems": "node test/dems.test.mjs",
+    "test:fantasy": "node test/fantasy.test.mjs",
     "test:basic": "node test/basic.test.mjs",
-    "test": "npm run test:starwars && npm run test:mongoose && npm run test:mongoose-lookup && npm run test:redis && npm run test:requrse && npm run test:inflight-request-cancelation && npm run test:dems && npm run test:basic",
+    "test": "npm run test:starwars && npm run test:mongoose && npm run test:mongoose-lookup && npm run test:redis && npm run test:requrse && npm run test:inflight-request-cancelation && npm run test:fantasy && npm run test:basic",
     "test:coverage": "c8 --exclude samples --exclude test npm run test",
     "test:lcov": "c8 --exclude samples --exclude test --reporter lcov npm run test",
     "coverage": "coveralls < coverage/lcov.info"

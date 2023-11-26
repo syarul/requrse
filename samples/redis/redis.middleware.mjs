@@ -57,7 +57,6 @@ const middleware = (query, { redis, redisKey, memberKey }) => rq(query, {
         return newData
       },
       async getMemberKeys () {
-
         return { keys: (await redis.smembers(memberKey)).sort() }
       },
       async remove ({ id }) {

@@ -3,6 +3,7 @@ export const test = async function (msg, run, arg = null) {
   try {
     arg = await run(arg)
     console.log('\x1b[32m%s\x1b[0m', '✔', ` ${msg} :: ${ok}\r\n`)
+    return arg
   } catch (e) {
     ok = 'Failed ::'
     console.error(e)

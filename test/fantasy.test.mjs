@@ -73,7 +73,7 @@ const methods = {
   vanguard: 'getVanguard'
 }
 
-test('Basic test', async() => {
+test('Basic test', async () => {
   await rq({
     PlayerClass: {
       player: {
@@ -86,7 +86,7 @@ test('Basic test', async() => {
 })
 
 // use $params when you need them
-test('Basic test with $param', async() => {
+test('Basic test with $param', async () => {
   await rq({
     PlayerClass: {
       player: {
@@ -101,7 +101,7 @@ test('Basic test with $param', async() => {
 
 // optimize your query by writing efficient methods, i.e.,
 // here 'progression' return this class next progression seamlessly
-test('Test with computed field', async() => {
+test('Test with computed field', async () => {
   await rq({
     PlayerClass: {
       player: {
@@ -130,7 +130,7 @@ test('Test with computed field', async() => {
 })
 
 // you can have multiple same dataset key name by / naming
-test('Test with / naming', async() => {
+test('Test with / naming', async () => {
   await rq({
     vanguard: {
       'vanguard/paladin': {
@@ -201,7 +201,7 @@ const extConfig = {
   })[param]
 }
 
-test('Test with new relational dataset', async() => {
+test('Test with new relational dataset', async () => {
   await rq({
     PlayerClass: {
       player: {
@@ -218,21 +218,21 @@ test('Test with new relational dataset', async() => {
     assert.deepEqual(result, {
       PlayerClass: {
         player: {
-          name: "Acolyte",
+          name: 'Acolyte',
           inventory: [
             {
-              id: "0",
-              name: "Healing Potion",
+              id: '0',
+              name: 'Healing Potion',
               count: 7
             },
             {
-              id: "1",
-              name: "Bandage",
+              id: '1',
+              name: 'Bandage',
               count: 1
             },
             {
-              id: "2",
-              name: "Holy Water",
+              id: '2',
+              name: 'Holy Water',
               count: 0
             }
           ]

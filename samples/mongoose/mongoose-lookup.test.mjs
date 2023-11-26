@@ -1,6 +1,7 @@
 import assert from 'assert'
 import mongoose from 'mongoose'
 import requrseMongoose from './mongoose.middleware.mjs'
+import { test as testFixture } from '../../test/fixture/test.mjs'
 
 mongoose.Promise = global.Promise
 
@@ -11,14 +12,8 @@ mongoose
     process.exit(1)
   })
 
-const test = (result, expected, msg = '') => {
-  try {
-    assert.deepEqual(result, expected)
-    console.log(`\r\n:: ${msg} ::\r\n`)
-  } catch(e) {
-    console.log(`\r\n:: Test failed: ${msg} ::`)
-    console.error(e)
-  }
+const test = async (result, expected, msg = '') => {
+  await testFixture(msg, () => assert.deepEqual(result, expected))
 }
 
 /**
