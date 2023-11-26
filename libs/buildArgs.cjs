@@ -16,10 +16,6 @@ const chk = (obj) => {
     })
     return newObj
   }
-  if (obj instanceof Array && obj.length === 1) {
-    return chk(obj[0])
-  }
-  return obj
 }
 
 /**

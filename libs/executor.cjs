@@ -3,15 +3,6 @@ const executeQuery = require('./executeQuery.cjs')
 const arrayToObject = require('./arrayToObject.cjs')
 
 /**
- * Error catcher function.
- *
- * @callback ErrorCallback
- * @param {Error} error - The error object.
- * @returns {*} The result of error handling.
- */
-const catcher = (e) => e(this)
-
-/**
  * Options for query execution.
  *
  * @typedef {object} QueryOptions
@@ -27,11 +18,9 @@ const catcher = (e) => e(this)
  * @returns {Promise<object>} A promise that resolves to the result object.
  */
 const rq = (query, opts) => {
-  try {
-    return executeQuery(query, null, opts).then(arrayToObject)
-  } catch (error) {
-    return catcher.bind(error)
-  }
+  return executeQuery(query, null, opts)
+    .then(arrayToObject)
+    .catch(error => console.error('reQurse Error:', error.message))
 }
 
 global.rq = rq

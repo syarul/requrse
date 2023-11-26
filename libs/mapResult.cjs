@@ -12,8 +12,8 @@ const mapResult = (query, result, currentQuery) => {
   result = result.map(([key, value]) => {
     if (value instanceof Array) {
       return [key, value]
-    } else if ((currentQuery || {})[key]) {
-      return [key, (currentQuery || {})[key]]
+    } else if (currentQuery[key]) {
+      return [key, currentQuery[key]]
     }
     const dKeys = Object.entries(query)
     for (const [dK, dV] of dKeys) {

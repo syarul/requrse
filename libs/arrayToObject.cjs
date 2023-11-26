@@ -9,7 +9,7 @@ const checkEntry = require('./checkEntry.cjs')
  */
 const arrayToObject = (arr) => {
   if (Array.isArray(arr) && !checkEntry(arr)) {
-    if (arr.length === 1 && Array.isArray(arr[0])/*  && checkEntry(arr[0]) */) {
+    if (arr.length === 1 && Array.isArray(arr[0])) {
       return arrayToObject(arr.flat())
     }
     return arr.map(arrayToObject)
@@ -20,7 +20,6 @@ const arrayToObject = (arr) => {
       if (i && i instanceof Object) {
         return i[0]
       }
-      return false
     }).filter(f => f !== undefined)
     const unique = checkUniq.length === [...new Set(checkUniq)].length
     arr.forEach((item) => {
