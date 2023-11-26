@@ -1,6 +1,7 @@
 import assert from 'assert'
-import rq from '../libs/executor.cjs'
 import fs from 'fs'
+import rq from '../libs/executor.cjs'
+import { test } from './fixture/test.mjs'
 
 const file = './test/data.json'
 
@@ -58,205 +59,218 @@ const methods = {
   addedAge: 'addedAge,age'
 }
 
-await rq({
-  Test: {
-    test: {
-      hello: {
-        a: 1
-      }
-    }
-  }
-}, { methods, config }).then((result) => {
-  assert.deepEqual(result, {
+await test('Test hello a', () =>
+  rq({
     Test: {
       test: {
-        hello: { a: 'x' }
+        hello: {
+          a: 1
+        }
       }
     }
+  }, { methods, config }).then((result) => {
+    assert.deepEqual(result, {
+      Test: {
+        test: {
+          hello: { a: 'x' }
+        }
+      }
+    })
   })
-}, console.error)
+)
 
-await rq({
-  Test: {
-    test: {
-      foo: 1
-    }
-  }
-}, { methods, config }).then((result) => {
-  assert.deepEqual(result, {
+await test('Test foo 5', () =>
+  rq({
     Test: {
       test: {
-        foo: 5
+        foo: 1
       }
     }
+  }, { methods, config }).then((result) => {
+    assert.deepEqual(result, {
+      Test: {
+        test: {
+          foo: 5
+        }
+      }
+    })
   })
-}, console.error)
+)
 
-await rq({
-  Test: {
-    test: {
-      bar: 1
-    }
-  }
-}, { methods, config }).then((result) => {
-  assert.deepEqual(result, {
+await test('Test bar 2', () =>
+  rq({
     Test: {
       test: {
-        bar: 2
+        bar: 1
       }
     }
+  }, { methods, config }).then((result) => {
+    assert.deepEqual(result, {
+      Test: {
+        test: {
+          bar: 2
+        }
+      }
+    })
   })
-}, console.error)
+)
 
-await rq({
-  Test: {
-    test: {
-      ber: 1
-    }
-  }
-}, { methods, config }).then((result) => {
-  assert.deepEqual(result, {
+await test('Test ber 1', () =>
+  rq({
     Test: {
       test: {
         ber: 1
       }
     }
-  })
-}, console.error)
-
-// // test deep query
-await rq({
-  Test: {
-    test: {
-      person: {
-        name: 1,
-        occupation: {
-          job: 1
+  }, { methods, config }).then((result) => {
+    assert.deepEqual(result, {
+      Test: {
+        test: {
+          ber: 1
         }
       }
-    }
-  }
-}, { methods, config }).then((result) => {
-  assert.deepEqual(result, {
+    })
+  }, console.error)
+)
+
+await test('Test deep query', () =>
+  rq({
     Test: {
       test: {
         person: {
-          name: 'John',
+          name: 1,
           occupation: {
-            job: 'Copywriter'
+            job: 1
           }
         }
       }
     }
-  })
-}, console.error)
-
-// // test non-scalar query
-await rq({
-  Test: {
-    test: {
-      person: '*'
-    }
-  }
-}, { methods, config }).then((result) => {
-  assert.deepEqual(result, {
-    Test: {
-      test: {
-        person: {
-          name: 'John',
-          age: 15
+  }, { methods, config }).then((result) => {
+    assert.deepEqual(result, {
+      Test: {
+        test: {
+          person: {
+            name: 'John',
+            occupation: {
+              job: 'Copywriter'
+            }
+          }
         }
       }
-    }
+    })
   })
-}, console.error)
+)
 
-// test recurrence query
-await rq({
-  Test: {
-    test: {
-      recurrentPerson: '*'
-    }
-  }
-}, { methods, config }).then((result) => {
-  assert.deepEqual(result, {
+await test('Test non-scalar query', () =>
+  rq({
     Test: {
       test: {
-        recurrentPerson: {
-          name: 'John',
-          age: 15
+        person: '*'
+      }
+    }
+  }, { methods, config }).then((result) => {
+    assert.deepEqual(result, {
+      Test: {
+        test: {
+          person: {
+            name: 'John',
+            age: 15
+          }
         }
       }
-    }
+    })
   })
-}, console.error)
+)
 
-// test data immutable method
-await rq({
-  Test: {
-    test: {
-      data: '*',
-      updateData: {
-        $params: {
-          author: {
-            books: [
-              'Harry Potter and the Philosopher\'s Stone',
-              'Harry Potter and the Chamber of Secrets'
-            ]
-          }
-        },
-        author: 1
-      }
-    }
-  }
-}, { methods, config }).then((result) => {
-  assert.deepEqual(result, {
+await test('Test recurrence query', () =>
+  rq({
     Test: {
       test: {
-        data: {
-          author: {
-            name: 'J.K. Rowling',
-            country: 'United Kingdom'
+        recurrentPerson: '*'
+      }
+    }
+  }, { methods, config }).then((result) => {
+    assert.deepEqual(result, {
+      Test: {
+        test: {
+          recurrentPerson: {
+            name: 'John',
+            age: 15
           }
-        },
+        }
+      }
+    })
+  })
+)
+
+await test('Test data immutability', () =>
+  rq({
+    Test: {
+      test: {
+        data: '*',
         updateData: {
-          author: {
-            name: 'J.K. Rowling',
-            country: 'United Kingdom',
-            books: [
-              'Harry Potter and the Philosopher\'s Stone',
-              'Harry Potter and the Chamber of Secrets'
-            ]
+          $params: {
+            author: {
+              books: [
+                'Harry Potter and the Philosopher\'s Stone',
+                'Harry Potter and the Chamber of Secrets'
+              ]
+            }
+          },
+          author: 1
+        }
+      }
+    }
+  }, { methods, config }).then((result) => {
+    assert.deepEqual(result, {
+      Test: {
+        test: {
+          data: {
+            author: {
+              name: 'J.K. Rowling',
+              country: 'United Kingdom'
+            }
+          },
+          updateData: {
+            author: {
+              name: 'J.K. Rowling',
+              country: 'United Kingdom',
+              books: [
+                'Harry Potter and the Philosopher\'s Stone',
+                'Harry Potter and the Chamber of Secrets'
+              ]
+            }
           }
         }
       }
-    }
+    })
   })
-}, console.error)
+)
 
-// test data immutable method
-await rq({
-  Test: {
-    test: {
-      person: {
-        age: 1,
-        addedAge: {
-          age: 1
-        }
-      }
-    }
-  }
-}, { methods, config }).then((result) => {
-  assert.deepEqual(result, {
+await test('Test data immutability operation', () =>
+  rq({
     Test: {
       test: {
         person: {
-          age: 15,
+          age: 1,
           addedAge: {
-            age: 16
+            age: 1
           }
         }
       }
     }
+  }, { methods, config }).then((result) => {
+    assert.deepEqual(result, {
+      Test: {
+        test: {
+          person: {
+            age: 15,
+            addedAge: {
+              age: 16
+            }
+          }
+        }
+      }
+    })
   })
-}, console.error)
+)

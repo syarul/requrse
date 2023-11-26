@@ -1,6 +1,7 @@
 import assert from 'assert'
 import mongoose from 'mongoose'
 import requrseMongoose from './mongoose.middleware.mjs'
+import { test as testFixture } from '../../test/fixture/test.mjs'
 
 mongoose.Promise = global.Promise
 
@@ -13,9 +14,8 @@ mongoose
 
 let arg
 const test = async function(msg, run) {
-  console.log(`\r\n :: ${msg} ::\r\n`)
   try {
-    arg = await run(arg)
+    arg = await testFixture(msg, run, arg)
   } catch (e) {
     console.error(e)
   }

@@ -103,7 +103,7 @@ function getPlayer (gameId) {
 }
 ```
 
-Then configure `requrse` to use these methods
+Then configure `reQurse` to use these methods
 ```js
 const confParams = {
   getPlayer, getClass, getProgression, getSupport, getVanguard
@@ -221,7 +221,7 @@ const inventoryData = {
 Demonstrate usage of method/computed field to return value that you need, in this case `count` which came from a relational collection that store the value only, you can use such logic to build a powerful query for your api.
 ```js
 /**
- * Helper function to get a item by ID.
+ * Helper function to get an item by ID.
  */
 function getItem (count, id) {
   // Returning a promise just to illustrate query support.
@@ -236,7 +236,7 @@ function getInventory ({ id }) {
 }
 ```
 
-Extends the requrse methods/config
+Extends the reQurse methods/config
 ```js
 const extConfig = {
   methods: {

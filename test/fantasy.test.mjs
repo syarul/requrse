@@ -1,4 +1,6 @@
+import assert from 'assert'
 import rq from '../libs/executor.cjs'
+import { test } from './fixture/test.mjs'
 
 const acolyte = { id: '0', progression: ['1', '4'], name: 'Acolyte' }
 const priest = { id: '1', progression: ['4'], name: 'Priest' }
@@ -71,72 +73,84 @@ const methods = {
   vanguard: 'getVanguard'
 }
 
-await rq({
-  PlayerClass: {
-    player: {
-      name: 1
-    }
-  }
-}, { methods, config }).then(console.log)
-// { PlayerClass: { player: { name: 'Inquisitor' } } }
-
-// use $params when you need them
-await rq({
-  PlayerClass: {
-    player: {
-      $params: { gameId: 0 },
-      name: 1
-    }
-  }
-}, { methods, config }).then(console.log)
-// { PlayerClass: { player: { name: 'Acolyte' } } }
-
-// optimize your query by writing efficient methods, i.e.,
-// here 'progression' return this class next progression seamlessly
-await rq({
-  PlayerClass: {
-    player: {
-      $params: { gameId: 0 },
-      id: 1,
-      name: 1,
-      progression: {
+test('Basic test', async () => {
+  await rq({
+    PlayerClass: {
+      player: {
         name: 1
       }
     }
-  }
-}, { methods, config }).then(console.log)
-// {
-//   PlayerClass: {
-//     player: {
-//       id: '0',
-//       name: 'Acolyte',
-//       progression: [
-//         { name: 'Priest' },
-//         { name: 'Inquisitor' }
-//       ]
-//     }
-//   }
-// }
+  }, { methods, config }).then((result) => {
+    assert.deepEqual(result, { PlayerClass: { player: { name: 'Inquisitor' } } })
+  })
+})
+
+// use $params when you need them
+test('Basic test with $param', async () => {
+  await rq({
+    PlayerClass: {
+      player: {
+        $params: { gameId: 0 },
+        name: 1
+      }
+    }
+  }, { methods, config }).then((result) => {
+    assert.deepEqual(result, { PlayerClass: { player: { name: 'Acolyte' } } })
+  })
+})
+
+// optimize your query by writing efficient methods, i.e.,
+// here 'progression' return this class next progression seamlessly
+test('Test with computed field', async () => {
+  await rq({
+    PlayerClass: {
+      player: {
+        $params: { gameId: 0 },
+        id: 1,
+        name: 1,
+        progression: {
+          name: 1
+        }
+      }
+    }
+  }, { methods, config }).then((result) => {
+    assert.deepEqual(result, {
+      PlayerClass: {
+        player: {
+          id: '0',
+          name: 'Acolyte',
+          progression: [
+            { name: 'Priest' },
+            { name: 'Inquisitor' }
+          ]
+        }
+      }
+    })
+  })
+})
 
 // you can have multiple same dataset key name by / naming
-await rq({
-  vanguard: {
-    'vanguard/paladin': {
-      $params: { id: 3 },
-      name: 1
-    },
-    'vanguard/inquisitor': {
-      $params: { id: 4 },
-      name: 1
+test('Test with / naming', async () => {
+  await rq({
+    vanguard: {
+      'vanguard/paladin': {
+        $params: { id: 3 },
+        name: 1
+      },
+      'vanguard/inquisitor': {
+        $params: { id: 4 },
+        name: 1
+      }
     }
-  }
-}, { methods, config }).then(console.log)
-// {
-//   vanguard: {
-//     'vanguard/paladin': { name: 'Paladin' },
-//     'vanguard/inquisitor': { name: 'Inquisitor' }
-//   }
-// }
+  }, { methods, config }).then((result) => {
+    assert.deepEqual(result, {
+      vanguard: {
+        'vanguard/paladin': { name: 'Paladin' },
+        'vanguard/inquisitor': { name: 'Inquisitor' }
+      }
+    })
+  })
+})
 
 // now we expand the dataset to the inventory of the player
 const healingPotion = { id: '0', effect: 'heal', dmg: 4, name: 'Healing Potion' }
@@ -187,38 +201,43 @@ const extConfig = {
   })[param]
 }
 
-await rq({
-  PlayerClass: {
-    player: {
-      $params: { gameId: 0 },
-      name: 1,
-      inventory: '*'
+test('Test with new relational dataset', async () => {
+  await rq({
+    PlayerClass: {
+      player: {
+        $params: { gameId: 0 },
+        name: 1,
+        inventory: {
+          id: 1,
+          name: 1,
+          count: 1
+        }
+      }
     }
-  }
-}, extConfig).then(console.log)
-// {
-//   PlayerClass: {
-//     player: {
-//       name: "Acolyte",
-//       inventory: [
-//         [
-//           {
-//             id: "0",
-//             name: "Healing Potion",
-//             count: 7
-//           },
-//           {
-//             id: "1",
-//             name: "Bandage",
-//             count: 1
-//           },
-//           {
-//             id: "2",
-//             name: "Holy Water",
-//             count: 0
-//           }
-//         ]
-//       ]
-//     }
-//   }
-// }
+  }, extConfig).then((result) => {
+    assert.deepEqual(result, {
+      PlayerClass: {
+        player: {
+          name: 'Acolyte',
+          inventory: [
+            {
+              id: '0',
+              name: 'Healing Potion',
+              count: 7
+            },
+            {
+              id: '1',
+              name: 'Bandage',
+              count: 1
+            },
+            {
+              id: '2',
+              name: 'Holy Water',
+              count: 0
+            }
+          ]
+        }
+      }
+    })
+  })
+})

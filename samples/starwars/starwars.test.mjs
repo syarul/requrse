@@ -1,5 +1,9 @@
 import assert from 'assert'
 import requrseExec from './starwars.middleware.mjs'
+import { test as testFixture } from '../../test/fixture/test.mjs'
+
+// suppress console.error message for this test
+console.error = () => {}
 
 const testList = [
   0,
@@ -17,8 +21,7 @@ const testList = [
 
 const test = (num, msg, run) => {
   if (testList.includes(num)) {
-    console.log(`\r\n :: ${msg} ::\r\n`)
-    Promise.resolve(run())
+    Promise.resolve(testFixture(msg, run))
   }
 }
 

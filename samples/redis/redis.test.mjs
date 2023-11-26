@@ -2,6 +2,7 @@ import assert from 'assert'
 import Redis from 'ioredis'
 import dotenv from 'dotenv'
 import requrseRedis from './redis.middleware.mjs'
+import { test } from '../../test/fixture/test.mjs'
 
 dotenv.config()
 
@@ -79,19 +80,27 @@ async function remove (id) {
   return books
 }
 
-async function test () {
+await test('Save book', async () => {
   for (const book of books) {
-    await save(book).then(console.log, console.error)
+    await save(book).then(result => {
+      assert.deepEqual(result, {
+        book: { create: { title: book.title } }
+      })
+    }, console.error)
   }
+})
 
-  await find()
+await test('Find book', () =>
+  find()
     .then(result => {
       assert.deepEqual(result, { book: { find: { genre: 'Science Fiction' } } })
     }, console.error)
+)
 
-  let keys
+let keys
 
-  await requrseRedis({
+await test('Retrieve member keys', () =>
+  requrseRedis({
     book: {
       getMemberKeys: {
         keys: 1
@@ -99,13 +108,22 @@ async function test () {
     }
   }, modelOptions).then(result => {
     keys = result.book.getMemberKeys.keys
+    assert.deepEqual(result, { book: { getMemberKeys: { keys: ['0', '1'] } } })
   }, console.error)
+)
 
-  await update(keys[0], {
+await test('Update book title', () =>
+  update(keys[0], {
     title: 'Harry Potter and the Prisoner of Azkaban'
-  }).then(console.log, console.error)
+  }).then(result => {
+    assert.deepEqual(result, {
+      book: { update: { title: 'Harry Potter and the Prisoner of Azkaban' } }
+    })
+  }, console.error)
+)
 
-  await requrseRedis({
+await test('Find book by genre', () =>
+  requrseRedis({
     book: {
       find: {
         $params: {
@@ -115,7 +133,6 @@ async function test () {
       }
     }
   }, modelOptions).then(result => {
-    console.log(result)
     assert.deepEqual(result, {
       book: {
         find: {
@@ -124,29 +141,19 @@ async function test () {
       }
     })
   }, console.error)
+)
 
-  await requrseRedis({
-    book: {
-      getMemberKeys: '*'
-    }
-  }, modelOptions).then(result => {
-    console.log(result)
-    assert.deepEqual(result, {
-      book: {
-        getMemberKeys: {
-          keys: ['0', '1']
-        }
-      }
-    })
-  }, console.error)
-
+await test('Remove keys, secondary keys', async () => {
   for (const key of keys) {
-    await remove(key).then(console.log, console.error)
+    await remove(key).then(result => {
+      assert.deepEqual(result, { book: { remove: { id: 1 } } })
+    }, console.error)
   }
+})
 
-  await find()
+await test('Confirm no more records exist', () =>
+  find()
     .then(result => {
-      console.log(result)
       assert.deepEqual(result, {
         book: {
           find: {
@@ -155,8 +162,6 @@ async function test () {
         }
       })
     }, console.error)
-}
+)
 
-test().then(() => {
-  redis.disconnect()
-})
+redis.disconnect()
