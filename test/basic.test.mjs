@@ -20,16 +20,16 @@ await rq({
 
 await rq({
   test: {
-      greeting: 1
+    greeting: 1
   }
 },
 {
   methods: {
-    test() {
+    test () {
       return {
-          test: {
-              greeting: 'hello world'
-          }
+        test: {
+          greeting: 'hello world'
+        }
       }
     }
   }
@@ -37,16 +37,16 @@ await rq({
 
 await rq({
   test: {
-      greeting: 1
+    greeting: 1
   }
 },
 {
   methods: {
-    test() {
+    test () {
       return {
-          test: {
-              greeting: null
-          }
+        test: {
+          greeting: null
+        }
       }
     }
   }
@@ -54,15 +54,15 @@ await rq({
 
 await rq({
   test: {
-      greeting: '*'
+    greeting: '*'
   }
 },
 {
   methods: {
-    test() {
+    test () {
       return [[0], [1], [2]]
     },
-    greeting(){
+    greeting () {
       return 'hello'
     }
   }
