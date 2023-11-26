@@ -54,7 +54,6 @@ const executeQuery = async (query, currentQuery, opts, mergeQuery = {}) => {
           resultQuery.push(compute.apply(mergeQuery, buildArgs($vParams, params, currentQuery)))
         }
         currentQuery = resultQuery
-        if (currentQuery === undefined) { failedComputed = true }
       } else if (typeof compute === 'function') {
         computed = true
         currentQuery = compute.apply(mergeQuery, buildArgs($vParams, params, ...args))
@@ -63,8 +62,7 @@ const executeQuery = async (query, currentQuery, opts, mergeQuery = {}) => {
         currentQuery = compute
         // resolve recurrence
         if (typeof currentQuery === 'string' && config(currentQuery)) {
-          const recurrence = config(currentQuery)
-          currentQuery = recurrence || currentQuery
+          currentQuery = config(currentQuery)
         }
       }
     }

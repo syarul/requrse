@@ -19,6 +19,56 @@ await rq({
 }).then(log, console.error)
 
 await rq({
+  test: {
+      greeting: 1
+  }
+},
+{
+  methods: {
+    test() {
+      return {
+          test: {
+              greeting: 'hello world'
+          }
+      }
+    }
+  }
+}).then(log, console.error)
+
+await rq({
+  test: {
+      greeting: 1
+  }
+},
+{
+  methods: {
+    test() {
+      return {
+          test: {
+              greeting: null
+          }
+      }
+    }
+  }
+}).then(log, console.error)
+
+await rq({
+  test: {
+      greeting: '*'
+  }
+},
+{
+  methods: {
+    test() {
+      return [[0], [1], [2]]
+    },
+    greeting(){
+      return 'hello'
+    }
+  }
+}).then(log, console.error)
+
+await rq({
   Test: {
     test: {
       person: {
