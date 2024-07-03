@@ -292,6 +292,39 @@ await rq({
 //   }
 // }
 ```
+You can also return as dataUrl
+```js
+await rq({
+  PlayerClass: {
+    player: {
+      $params: { gameId: 0 },
+      name: 1,
+      inventory: {
+        id: 1,
+        name: 1,
+        count: 1
+      }
+    }
+  }
+}, { ...extConfig, dataUrl: 'PlayerClass/player/inventory' }).then(console.log)
+// [
+//   {
+//     id: '0',
+//     name: 'Healing Potion',
+//     count: 7
+//   },
+//   {
+//     id: '1',
+//     name: 'Bandage',
+//     count: 1
+//   },
+//   {
+//     id: '2',
+//     name: 'Holy Water',
+//     count: 0
+//   }
+// ]
+```
 
 ## More Samples
 You can check [samples](https://github.com/syarul/requrse/blob/main/samples) folder to see more usage cases with [Mongoose](https://github.com/syarul/requrse/blob/main/samples/mongoose), [Redis](https://github.com/syarul/requrse/blob/main/samples/redis) and the [Starwars](https://github.com/syarul/requrse/blob/main/samples/starwars) examples.
