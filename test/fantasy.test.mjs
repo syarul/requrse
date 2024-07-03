@@ -241,3 +241,40 @@ test('Test with new relational dataset', async () => {
     })
   })
 })
+
+test('Test with dataPath', async () => {
+  await rq({
+    PlayerClass: {
+      player: {
+        $params: { gameId: 0 },
+        name: 1,
+        inventory: {
+          id: 1,
+          name: 1,
+          count: 1
+        }
+      }
+    }
+  }, {
+    ...extConfig,
+    dataUrl: 'PlayerClass/player/inventory'
+  }).then((result) => {
+    assert.deepEqual(result, [
+      {
+        id: '0',
+        name: 'Healing Potion',
+        count: 7
+      },
+      {
+        id: '1',
+        name: 'Bandage',
+        count: 1
+      },
+      {
+        id: '2',
+        name: 'Holy Water',
+        count: 0
+      }
+    ])
+  })
+})
