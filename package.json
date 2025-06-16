@@ -1,6 +1,6 @@
 {
   "name": "@syarul/requrse",
-  "version": "0.2.7",
+  "version": "0.2.9",
   "type": "module",
   "description": "Lightweight driven query language",
   "main": "libs/executor.cjs",

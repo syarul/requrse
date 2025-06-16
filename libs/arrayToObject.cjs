@@ -17,9 +17,7 @@ const arrayToObject = (arr) => {
   if (checkEntry(arr)) {
     let obj
     const checkUniq = arr.map(i => {
-      if (i && i instanceof Object) {
-        return i[0]
-      }
+      return i && i instanceof Object ? i[0] : undefined
     }).filter(f => f !== undefined)
     const unique = checkUniq.length === [...new Set(checkUniq)].length
     arr.forEach((item) => {
