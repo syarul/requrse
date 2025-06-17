@@ -87,7 +87,7 @@ const executeQuery = async (query, currentQuery, opts, mergeQuery = {}) => {
       buildEntries.push([key, result])
     } else {
       // resolved scalar/non-scalar value, and consequently same types
-      buildEntries.push([key, typeof currentQuery === typeof value ? currentQuery : value === '*' ? currentQuery : value])
+      buildEntries.push([key, typeof currentQuery === typeof value || value === '*' ? currentQuery : value])
     }
   }
   return buildEntries

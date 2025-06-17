@@ -20,6 +20,9 @@ const mapResult = (query, result, currentQuery) => {
       if (currentQuery[dK] && typeof currentQuery[dK] === 'object') {
         return [key, Object.fromEntries(mapResult(dV, result, currentQuery[dK]))[key]]
       }
+      if (currentQuery instanceof Array) {
+        return [key, currentQuery.map(q => q?.[dK] || q || null)]
+      }
     }
     return [key, null]
   })

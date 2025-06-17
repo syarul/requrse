@@ -6,7 +6,7 @@ import { test } from '../../test/fixture/test.mjs'
 
 dotenv.config()
 
-const redis = new Redis(`rediss://default:${process.env.REDIS_KEY}@us1-capital-badger-41133.upstash.io:41133`)
+const redis = new Redis(`redis://default:${process.env.REDIS_KEY}@redis-14348.c292.ap-southeast-1-1.ec2.redns.redis-cloud.com:14348`)
 
 const redisKey = 'books'
 const memberKey = 'books_ids'
