@@ -8,15 +8,15 @@
  */
 const chk = (obj) => {
   if (obj instanceof Object && !(obj instanceof Array)) {
-    const newObj = {}
-    Object.keys(obj).forEach(key => {
+    const newObj = {};
+    Object.keys(obj).forEach((key) => {
       if (obj[key] !== undefined) {
-        newObj[key] = obj[key]
+        newObj[key] = obj[key];
       }
-    })
-    return newObj
+    });
+    return newObj;
   }
-}
+};
 
 /**
  * Reduces an array of objects into a single object, removing undefined values.
@@ -25,14 +25,18 @@ const chk = (obj) => {
  * @returns {object | object[]} A single object or an array of objects with undefined values removed.
  */
 const reducer = (arr) => {
-  if (!arr.some(a => typeof a !== 'object')) {
-    const obj = arr.reduce((acc, curr) => ({
-      ...chk(acc), ...chk(curr)
-    }), {})
-    return Object.keys(obj).length ? obj : []
+  if (!arr.some((a) => typeof a !== "object")) {
+    const obj = arr.reduce(
+      (acc, curr) => ({
+        ...chk(acc),
+        ...chk(curr),
+      }),
+      {},
+    );
+    return Object.keys(obj).length ? obj : [];
   }
-  return arr
-}
+  return arr;
+};
 
 /**
  * Combines and prepares arguments for a function call.
@@ -43,11 +47,10 @@ const reducer = (arr) => {
  * @returns {object[]} An array of arguments for the function call.
  */
 module.exports = function ($vParams, params, ...currentQuery) {
-  let args = []
-  args = args.concat(reducer(currentQuery))
+  const args = [].concat(reducer(currentQuery));
   if ($vParams) {
-    args.push($vParams)
+    args.push($vParams);
   }
-  args.push(params)
-  return args
-}
+  args.push(params);
+  return args;
+};

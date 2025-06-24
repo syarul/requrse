@@ -1,6 +1,6 @@
 {
-  "name": "@syarul/requrse",
-  "version": "0.2.11",
+  "name": "requrse",
+  "version": "0.2.12",
   "type": "module",
   "description": "Lightweight driven query language",
   "main": "libs/executor.cjs",
@@ -41,14 +41,10 @@
     "c8": "^8.0.1",
     "coveralls": "^3.1.1",
     "dotenv": "^16.3.1",
-    "graphql": "^16.8.1",
     "ioredis": "^5.3.2",
     "mongoose": "^7.4.1"
   },
   "dependencies": {
     "deep-equal": "^2.2.2"
-  },
-  "publishConfig": {
-    "@syarul:registry": "https://npm.pkg.github.com"
   }
 }

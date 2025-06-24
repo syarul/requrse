@@ -7,13 +7,10 @@
  * @returns {Promise<any>} A promise that resolves when all input promises are resolved.
  */
 const resolvePromises = async (promise) => {
-  let res
   if (promise instanceof Array) {
-    res = await Promise.all(promise.map(resolvePromises))
-  } else {
-    res = await promise
+    return Promise.all(promise.map(resolvePromises));
   }
-  return res
-}
+  return promise;
+};
 
-module.exports = resolvePromises
+module.exports = resolvePromises;
