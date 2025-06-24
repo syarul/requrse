@@ -11,22 +11,25 @@
 const mapResult = (query, result, currentQuery) => {
   result = result.map(([key, value]) => {
     if (value instanceof Array) {
-      return [key, value]
+      return [key, value];
     } else if (currentQuery[key]) {
-      return [key, currentQuery[key]]
+      return [key, currentQuery[key]];
     }
-    const dKeys = Object.entries(query)
+    const dKeys = Object.entries(query);
     for (const [dK, dV] of dKeys) {
-      if (currentQuery[dK] && typeof currentQuery[dK] === 'object') {
-        return [key, Object.fromEntries(mapResult(dV, result, currentQuery[dK]))[key]]
+      if (currentQuery[dK] && typeof currentQuery[dK] === "object") {
+        return [
+          key,
+          Object.fromEntries(mapResult(dV, result, currentQuery[dK]))[key],
+        ];
       }
       if (currentQuery instanceof Array) {
-        return [key, currentQuery.map(q => q?.[dK] || q || null)]
+        return [key, currentQuery.map((q) => q?.[dK] || q || null)];
       }
     }
-    return [key, null]
-  })
-  return result
-}
+    return [key, null];
+  });
+  return result;
+};
 
-module.exports = mapResult
+module.exports = mapResult;

@@ -10,12 +10,12 @@
  * @returns {[object[], object, object]} An array containing arguments, currentQuery, and vParams.
  */
 module.exports = (value, currentQuery, alias, params) => {
-  const vParams = value.$params
-  const $params = currentQuery && !alias ? { currentQuery } : vParams || value
-  delete value.$params
-  let args = Object.entries($params).map(p => p[1])
+  const vParams = value.$params;
+  const $params = currentQuery && !alias ? { currentQuery } : vParams || value;
+  delete value.$params;
+  let args = Object.entries($params).map((p) => p[1]);
   if (params && params instanceof Array) {
-    args = params.map(p => ({ [p]: $params[p] }))
+    args = params.map((p) => ({ [p]: $params[p] }));
   }
-  return [args, $params, vParams]
-}
+  return [args, $params, vParams];
+};

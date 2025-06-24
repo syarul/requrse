@@ -1,5 +1,16 @@
 // @ts-check
 
+function queryReducer(acc, ql) {
+  return (query) => {
+    return {
+      ...acc,
+      ...(!Array.isArray(ql) && typeof ql === "object"
+        ? ql
+        : mergeQuery(query, ql)),
+    };
+  };
+}
+
 /**
  * Merges two query objects.
  *
@@ -9,27 +20,13 @@
  */
 const mergeQuery = (query, nextQuery) => {
   if (Array.isArray(nextQuery)) {
-    let obj = {}
-    nextQuery.forEach(q => {
-      if (!Array.isArray(q) && typeof q === 'object') {
-        obj = {
-          ...obj,
-          ...q
-        }
-      } else {
-        obj = {
-          ...obj,
-          ...(mergeQuery(query, q))
-        }
-      }
-    })
-    return mergeQuery(query, obj)
+    return mergeQuery(query, nextQuery.reduce(queryReducer(query), {}));
   } else {
     return {
       ...query,
-      ...nextQuery
-    }
+      ...nextQuery,
+    };
   }
-}
+};
 
-module.exports = mergeQuery
+module.exports = mergeQuery;
