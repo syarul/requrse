@@ -66,7 +66,7 @@ function handleComputeParams({
 
 /**
  *
- * @param {ComputeParams & GeneratedParams} _
+ * @param {ComputeParams & GeneratedParams & QueryOptions} _
  * @returns
  */
 function handleCompute({
@@ -78,6 +78,8 @@ function handleCompute({
   params,
   failedComputed,
   args,
+  config,
+  methods,
 }) {
   currentQuery = compute.apply(
     mergeQuery,
@@ -85,6 +87,21 @@ function handleCompute({
   );
   if (currentQuery === undefined) {
     failedComputed = true;
+  }
+  // look for computed field
+  if (currentQuery instanceof Object) {
+    for (const key in currentQuery) {
+      compute =
+        (typeof config === "function" && config(key)) ||
+        methods?.[key] ||
+        compute;
+      if (methods?.[key] && compute && typeof compute === "function") {
+        currentQuery[key] = compute.apply(
+          mergeQuery,
+          buildArgs($vParams, params, ...args),
+        );
+      }
+    }
   }
   return {
     computed: true,
@@ -232,6 +249,7 @@ const processHandler = ({
   params,
   args,
   config,
+  methods,
 }) => {
   mergeQuery.key = mergeQuery?.key || key; // model cache support
   mergeQuery = merge(mergeQuery, currentQuery);
@@ -247,7 +265,7 @@ const processHandler = ({
     1: handleCompute,
   };
 
-  const match = Object.keys(checks).find((key) => checks[parseInt(key)])
+  const match = Object.keys(checks).find((key) => checks[parseInt(key)]);
 
   return (handlers?.[match] || handleOther)({
     compute,
@@ -259,6 +277,7 @@ const processHandler = ({
     key,
     args,
     config,
+    methods,
   });
 };
 

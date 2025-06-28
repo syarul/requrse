@@ -1,6 +1,6 @@
 {
   "name": "requrse",
-  "version": "0.2.12",
+  "version": "0.3.1",
   "type": "module",
   "description": "Lightweight driven query language",
   "main": "libs/executor.cjs",
@@ -15,7 +15,8 @@
     "test:basic": "node test/basic.test.mjs",
     "test:array": "node test/array.test.mjs",
     "test:array-string": "node test/arrayString.test.mjs",
-    "test": "npm run test:starwars && npm run test:mongoose && npm run test:mongoose-lookup && npm run test:redis && npm run test:requrse && npm run test:inflight-request-cancelation && npm run test:fantasy && npm run test:basic && npm run test:array && npm run test:array-string",
+    "test:duplicate": "node test/duplicateField.test.mjs",
+    "test": "npm run test:starwars && npm run test:mongoose && npm run test:mongoose-lookup && npm run test:redis && npm run test:requrse && npm run test:inflight-request-cancelation && npm run test:fantasy && npm run test:basic && npm run test:array && npm run test:array-string && npm run test:duplicate",
     "test:coverage": "c8 --exclude samples --exclude test npm run test",
     "test:lcov": "c8 --exclude samples --exclude test --reporter lcov npm run test",
     "coverage": "coveralls < coverage/lcov.info"
