@@ -52,7 +52,7 @@ test("Test with array field", async () => {
           name: 1,
           afters: {
             id: 1,
-            name: 1
+            name: 1,
           },
         },
       },
