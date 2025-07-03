@@ -20,6 +20,8 @@ const iterate = (result, currentQuery) => {
           res[key] = query[key];
         } else if (value[i] !== undefined) {
           res[key] = [value[i]];
+        } else if (i === parseInt(key, 10)) {
+          res[key] = query;
         }
       });
       const e = Object.entries(res);
