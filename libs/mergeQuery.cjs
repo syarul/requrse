@@ -1,15 +1,13 @@
 // @ts-check
 
-function queryReducer(acc, ql) {
+const queryReducer = (acc, ql) => {
   return (query) => {
     return {
       ...acc,
-      ...(!Array.isArray(ql) && typeof ql === "object"
-        ? ql
-        : mergeQuery(query, ql)),
+      ...mergeQuery(query, ql),
     };
   };
-}
+};
 
 /**
  * Merges two query objects.

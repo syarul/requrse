@@ -2,8 +2,8 @@
 
 /**
  * @typedef KeyAlias
- * @property {*} key
- * @property {*} alias
+ * @property {String} key
+ * @property {String} alias
  */
 
 /**
@@ -13,9 +13,11 @@
  * @param {string} key - The string to split.
  * @returns {KeyAlias} An array of substrings.
  */
-module.exports = (symbol, key) => {
+const getAlias = (symbol, key) => {
   return {
     key: new RegExp(symbol).test(key) ? key.split(symbol)[0] : key,
     alias: new RegExp(symbol).test(key) ? key.split(symbol)[1] : "",
   };
 };
+
+module.exports = getAlias;

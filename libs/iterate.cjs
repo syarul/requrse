@@ -1,5 +1,18 @@
 // @ts-check
 
+const reducer =
+  (query, index) =>
+  (acc, [key, value]) => {
+    if (value === 1 && query[key] !== undefined) {
+      acc[key] = query[key];
+    } else if (value[index] !== undefined) {
+      acc[key] = [value[index]];
+    } else if (index === parseInt(key, 10)) {
+      acc[key] = query;
+    }
+    return acc;
+  };
+
 /**
  * Iterates through result and currentQuery and merge currentQuery properties into result.
  *
@@ -14,18 +27,7 @@ const iterate = (result, currentQuery) => {
       if (query instanceof Array) {
         return query;
       }
-      const e = Object.entries(
-        result.reduce((acc, [key, value]) => {
-          if (value === 1 && query[key] !== undefined) {
-            acc[key] = query[key];
-          } else if (value[i] !== undefined) {
-            acc[key] = [value[i]];
-          } else if (i === parseInt(key, 10)) {
-            acc[key] = query;
-          }
-          return acc;
-        }, {}),
-      );
+      const e = Object.entries(result.reduce(reducer(query, i), {}));
       return e.length === 1 ? e.flat() : e;
     })
     .filter((f) => f.length);

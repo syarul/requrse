@@ -27,7 +27,9 @@ jobs:
       - run: npm ci
 
       - name: Set up dotenv
-        run: echo "REDIS_KEY=${{ secrets.REDIS_KEY }}" >> .env
+        run: |
+          echo "REDIS_KEY=${{ secrets.REDIS_KEY }}" >> .env
+          echo "REDIS_URL=${{ secrets.REDIS_URL }}" >> .env
 
       - name: Test
         run: npm run test:lcov

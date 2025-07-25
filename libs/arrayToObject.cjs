@@ -7,12 +7,26 @@ const checkEntry = require("./checkEntry.cjs");
  * @returns {Boolean}
  */
 const checkUniq = (arr) => {
-  const check = arr
-    .map((i) => {
-      return i && i instanceof Object ? i[0] : undefined;
-    })
-    .filter((f) => f !== undefined);
+  const check = arr.map((i) => i && i?.[0]).filter((f) => f !== undefined);
   return check.length === [...new Set(check)].length;
+};
+
+/**
+ *
+ * @param {Boolean} unique
+ * @returns
+ */
+const reducer = (unique) => {
+  return (acc, item) => {
+    if (item && item[0]) {
+      if (unique) {
+        acc[item[0]] = arrayToObject(item[1]);
+      } else {
+        acc.push({ [item[0]]: arrayToObject(item[1]) });
+      }
+    }
+    return acc;
+  };
 };
 
 /**
@@ -30,19 +44,7 @@ const arrayToObject = (arr) => {
   }
   if (checkEntry(arr)) {
     const unique = checkUniq(arr);
-    return arr.reduce(
-      (acc, item) => {
-        if (item && item[0]) {
-          if (unique) {
-            acc[item[0]] = arrayToObject(item[1]);
-          } else {
-            acc.push({ [item[0]]: arrayToObject(item[1]) });
-          }
-        }
-        return acc;
-      },
-      unique ? {} : [],
-    );
+    return arr.reduce(reducer(unique), unique ? {} : []);
   }
   return arr;
 };
