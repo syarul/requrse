@@ -1,33 +1,37 @@
 // @ts-check
 const getAlias = require("./getAlias.cjs");
 
-function getParams(parameter) {
+function getParams({ alias }) {
   return (
-    (typeof parameter === "string" &&
-      parameter.length &&
-      parameter.split("|")) ||
-    parameter
+    (typeof alias === "string" && alias.length && alias.split("|")) || alias
   );
 }
+
+/**
+ * @typedef ComputeMethod
+ * @property {function | undefined} compute
+ * @property {string[] | string | undefined} params
+ */
 
 /**
  * Gets a compute function and parameters.
  *
  * @param {import("./executeQuery.cjs").CombineOptions} options - The method name or function.
  * @param {string} key - The configuration function.
- * @returns {[function | undefined, string[] | string | undefined]} An array containing the compute function and parameters.
+ * @returns {ComputeMethod} An object containing the compute function and parameters.
  */
-module.exports = (options, key) => {
-  const { methods, config } = options;
+module.exports = ({ methods, config }, key) => {
   const method = methods?.[key];
-  let compute;
-  let params;
-  if (typeof method === "function") {
-    compute = method;
-  } else if (method) {
-    let [m, parameter] = getAlias(",", method);
-    params = getParams(parameter);
-    compute = config(m);
-  }
-  return [compute, params];
+  return {
+    compute:
+      typeof method === "function"
+        ? method
+        : method
+          ? config(getAlias(",", method).key)
+          : undefined,
+    params:
+      typeof method !== "function" && method
+        ? getParams(getAlias(",", method))
+        : undefined,
+  };
 };
