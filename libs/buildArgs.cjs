@@ -46,7 +46,7 @@ const reducer = (arr) => {
  * @param {...object} currentQuery - Current query objects.
  * @returns {object[]} An array of arguments for the function call.
  */
-module.exports = function ($vParams, params, ...currentQuery) {
+const buildArgs = ($vParams, params, ...currentQuery) => {
   const args = [].concat(reducer(currentQuery));
   if ($vParams) {
     args.push($vParams);
@@ -54,3 +54,5 @@ module.exports = function ($vParams, params, ...currentQuery) {
   args.push(params);
   return args;
 };
+
+module.exports = buildArgs;

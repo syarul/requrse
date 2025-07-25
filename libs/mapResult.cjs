@@ -24,7 +24,7 @@ const mapResult = (query, result, currentQuery) => {
         ];
       }
       if (currentQuery instanceof Array) {
-        return [key, currentQuery.map((q) => q?.[dK] || q || null)];
+        return [key, currentQuery.map((q) => q?.[dK])];
       }
     }
     return [key, null];

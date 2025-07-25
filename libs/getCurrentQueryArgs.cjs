@@ -16,7 +16,7 @@
  * @param {string[] | string | undefined} params - An array of parameter names.
  * @returns {CurrentArgs} An array containing arguments, currentQuery, and vParams.
  */
-module.exports = (value, currentQuery, alias, params) => {
+const getCurrentQueryArgs = (value, currentQuery, alias, params) => {
   const $vParams = value.$params;
   const $params = currentQuery && !alias ? { currentQuery } : $vParams || value;
   // remove $params field
@@ -30,3 +30,5 @@ module.exports = (value, currentQuery, alias, params) => {
     $vParams,
   };
 };
+
+module.exports = getCurrentQueryArgs;
