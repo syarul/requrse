@@ -300,9 +300,9 @@ const processHandler = ({
  */
 function genParams(currentQuery, options) {
   const { _key, value } = options;
-  const [key, alias] = getAlias("/", _key);
-  const [compute, params] = computeMethod(options, key);
-  const [args, $params, $vParams] = getCurrentQueryArgs(
+  const { key, alias } = getAlias("/", _key);
+  const { compute, params } = computeMethod(options, key);
+  const { args, $params, $vParams } = getCurrentQueryArgs(
     value,
     currentQuery,
     alias,

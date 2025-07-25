@@ -10,25 +10,23 @@
 const iterate = (result, currentQuery) => {
   return currentQuery
     .map((query, i) => {
-      const res = {};
       query = query instanceof Array ? iterate(result, query) : query;
       if (query instanceof Array) {
         return query;
       }
-      result.forEach(([key, value]) => {
-        if (value === 1 && query[key] !== undefined) {
-          res[key] = query[key];
-        } else if (value[i] !== undefined) {
-          res[key] = [value[i]];
-        } else if (i === parseInt(key, 10)) {
-          res[key] = query;
-        }
-      });
-      const e = Object.entries(res);
-      if (e.length === 1) {
-        return e.flat();
-      }
-      return e;
+      const e = Object.entries(
+        result.reduce((acc, [key, value]) => {
+          if (value === 1 && query[key] !== undefined) {
+            acc[key] = query[key];
+          } else if (value[i] !== undefined) {
+            acc[key] = [value[i]];
+          } else if (i === parseInt(key, 10)) {
+            acc[key] = query;
+          }
+          return acc;
+        }, {}),
+      );
+      return e.length === 1 ? e.flat() : e;
     })
     .filter((f) => f.length);
 };
