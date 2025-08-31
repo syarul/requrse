@@ -21,7 +21,6 @@ function waterfallParser(query) {
         Object.assign(acc, item);
         return acc;
       }
-      return acc;
     }, current);
 
     return {
@@ -70,7 +69,7 @@ class RqExtender {
   }
   compute(payload) {
     return rq(payload, {
-      methods: this.methods || {},
+      methods: this.methods,
       config: (param) => this.getMethodsMap()[param],
     });
   }
