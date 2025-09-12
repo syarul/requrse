@@ -74,7 +74,7 @@ const deepMerge = (target, ...sources) => {
  *
  * @param {object | undefined} $vParams - Additional parameters.
  * @param {object} params - Main parameters.
- * @param {object} currentQuery - Current query objects.
+ * @param {...object} currentQuery - Current query objects.
  * @returns {object[]} An array of arguments for the function call.
  */
 const buildArgs = function ($vParams, params, ...currentQuery) {
@@ -87,14 +87,6 @@ const buildArgs = function ($vParams, params, ...currentQuery) {
   }
   args.push(params);
   if (isObj(args[0])) {
-    // args[0] = {
-    //   // do first since it may likely get override if same key exist on next query
-    //   ...(isObj(this) ? this : {}), // this is mergeQuery
-    //   ...args[0],
-    //   ...(isObj($vParams) ? $vParams : {}),
-    //   ...(isObj(params) ? params : {}),
-    // };
-
     args[0] = deepMerge(
       {},
       isObj(this) ? this : {},
@@ -103,7 +95,6 @@ const buildArgs = function ($vParams, params, ...currentQuery) {
       isObj(params) ? params : {},
     );
   }
-  // console.log(args)
   return args;
 };
 
