@@ -27,7 +27,7 @@ const mapResult = (query, result, currentQuery) => {
         return [key, currentQuery.map((q) => q?.[dK])];
       }
     }
-    return [key, null];
+    return [key, value];
   });
   return result;
 };

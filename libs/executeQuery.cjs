@@ -5,17 +5,9 @@ const iterate = require("./iterate.cjs");
 const computeMethod = require("./computeMethod.cjs");
 const getAlias = require("./getAlias.cjs");
 const getCurrentQueryArgs = require("./getCurrentQueryArgs.cjs");
-const buildArgs = require("./buildArgs.cjs");
+const { buildArgs, isObj } = require("./buildArgs.cjs");
 const merge = require("./mergeQuery.cjs");
 const mapResult = require("./mapResult.cjs");
-
-/**
- * Options for query execution.
- *
- * @typedef {object} QueryOptions
- * @property {object} methods - Methods configuration.
- * @property {object} config - Configuration settings.
- */
 
 /**
  * @typedef ComputeParams
@@ -42,34 +34,57 @@ function handleComputeParams({
   if (currentQuery instanceof Array && !equal(resultQuery, currentQuery)) {
     for (const obj of currentQuery) {
       if ($vParams && !params && !obj[key]) {
-        resultQuery.push(compute.apply(mergeQuery, [obj, $vParams]));
+        try {
+          resultQuery.push(compute.apply(mergeQuery, [obj, $vParams]));
+        } catch (err) {
+          throw err;
+        }
       } else {
-        resultQuery.push(
-          compute.apply(
-            mergeQuery,
-            buildArgs($vParams, params, { [key]: obj[key] }),
-          ),
-        );
+        try {
+          resultQuery.push(
+            compute.apply(
+              mergeQuery,
+              buildArgs.apply(mergeQuery, [
+                $vParams,
+                params,
+                { [key]: obj[key] },
+              ]),
+            ),
+          );
+        } catch (err) {
+          throw err;
+        }
       }
     }
   } else {
-    resultQuery.push(
-      compute.apply(mergeQuery, buildArgs($vParams, params, currentQuery)),
-    );
+    try {
+      resultQuery = [
+        compute.apply(
+          mergeQuery,
+          buildArgs.apply(mergeQuery, [$vParams, params, currentQuery]),
+        ),
+      ];
+    } catch (err) {
+      throw err;
+    }
   }
   return {
     computed: true,
-    currentQuery: resultQuery,
+    ...(resultQuery instanceof Object
+      ? { currentQuery: resultQuery }
+      : { currentQuery }),
     resultQuery,
+    mergeQuery,
   };
 }
 
 /**
  *
- * @param {ComputeParams & GeneratedParams & QueryOptions} _
+ * @param {ComputeParams & GeneratedParams & import("./executor.cjs").QueryOptions} _
  * @returns
  */
 function handleCompute({
+  key,
   compute,
   currentQuery,
   resultQuery,
@@ -81,25 +96,33 @@ function handleCompute({
   config,
   methods,
 }) {
-  currentQuery = compute.apply(
-    mergeQuery,
-    buildArgs($vParams, params, ...args),
-  );
+  try {
+    currentQuery = compute.apply(
+      mergeQuery,
+      buildArgs.apply(mergeQuery, [$vParams, params, ...args]),
+    );
+  } catch (err) {
+    throw err;
+  }
   if (currentQuery === undefined) {
     failedComputed = true;
   }
   // look for computed field
-  if (currentQuery instanceof Object) {
+  if (isObj(currentQuery)) {
     for (const key in currentQuery) {
       compute =
         (typeof config === "function" && config(key)) ||
         methods?.[key] ||
         compute;
       if (methods?.[key] && compute && typeof compute === "function") {
-        currentQuery[key] = compute.apply(
-          mergeQuery,
-          buildArgs($vParams, params, ...args),
-        );
+        try {
+          currentQuery[key] = compute.apply(
+            mergeQuery,
+            buildArgs.apply(mergeQuery, [$vParams, params, ...args]),
+          );
+        } catch (err) {
+          throw err;
+        }
       }
     }
   }
@@ -108,24 +131,38 @@ function handleCompute({
     failedComputed,
     currentQuery,
     resultQuery,
+    mergeQuery,
   };
 }
 
 /**
  *
- * @param {ComputeParams & GeneratedParams & QueryOptions} _
+ * @param {ComputeParams & GeneratedParams & import("./executor.cjs").QueryOptions} _
  * @returns
  */
-function handleOther({ compute, currentQuery, resultQuery, config }) {
+function handleOther({
+  key,
+  compute,
+  currentQuery,
+  resultQuery,
+  mergeQuery,
+  config,
+  $vParams,
+  params,
+}) {
   currentQuery = compute;
   // resolve recurrence
   if (typeof currentQuery === "string" && config(currentQuery)) {
     currentQuery = config(currentQuery);
   }
+  if (!currentQuery && ($vParams || params)) {
+    currentQuery = $vParams || params;
+  }
   return {
     computed: false,
     currentQuery,
     resultQuery,
+    mergeQuery,
   };
 }
 
@@ -139,7 +176,7 @@ function handleOther({ compute, currentQuery, resultQuery, config }) {
 
 /**
  *
- * @param {ReducerOptions & QueryOptions & ValueIsObject} _
+ * @param {ReducerOptions & import("./executor.cjs").QueryOptions & ValueIsObject} _
  * @returns
  */
 async function valueIsObject({
@@ -184,24 +221,33 @@ async function valueIsObject({
   ) {
     result = null;
   }
-  return result;
+  return { res: result, mergeQuery };
 }
 
 /**
  * @typedef Result
  * @property {Promise<CurrentQuery>} currentQuery
+ * @property {ResultQuery} resultQuery
  * @property {Boolean | undefined} [computed]
  * @property {Boolean | undefined} [failedComputed]
  */
 
 /**
+ * @typedef QueryResult
+ * @property {*} res
+ * @property {MergeQuery} mergeQuery
+ */
+
+/**
  *
  * @param {CombineOptions & Result} _
- * @returns
+ * @returns {Promise<QueryResult>}
  */
 async function getResult({
+  // _key,
   value,
   currentQuery,
+  resultQuery,
   methods,
   config,
   mergeQuery,
@@ -210,20 +256,30 @@ async function getResult({
   failedComputed,
 }) {
   const resolvedCurrentQuery = await resolvePromises(currentQuery);
-  return value instanceof Object
-    ? await valueIsObject({
-        value,
-        resolvedCurrentQuery,
-        methods,
-        config,
-        mergeQuery,
-        query,
-        computed,
-        failedComputed,
-      })
-    : typeof resolvedCurrentQuery === typeof value || value === "*"
-      ? currentQuery
-      : value;
+  let res;
+  if (value instanceof Object) {
+    return valueIsObject({
+      value,
+      resolvedCurrentQuery,
+      methods,
+      config,
+      mergeQuery,
+      query,
+      computed,
+      failedComputed,
+    });
+  } else if (typeof resolvedCurrentQuery === typeof value || value === "*") {
+    res = currentQuery;
+  } else if (
+    resultQuery instanceof Array &&
+    resultQuery.length === 1 &&
+    typeof resultQuery[0] !== "object"
+  ) {
+    res = resultQuery[0];
+  } else {
+    res = value;
+  }
+  return { res, mergeQuery };
 }
 
 /**
@@ -235,7 +291,7 @@ async function getResult({
 
 /**
  *
- * @param {GeneratedParams & QueryOptions & CombineQuery} _
+ * @param {GeneratedParams & import("./executor.cjs").QueryOptions & CombineQuery} _
  * @returns
  */
 const processHandler = ({
@@ -328,6 +384,7 @@ function genParams(currentQuery, options) {
  * @property {BuildEntries} buildEntries
  * @property {ResultQuery} resultQuery
  * @property {CurrentQuery} currentQuery
+ * @property {MergeQuery} mergeQuery
  */
 
 /**
@@ -335,10 +392,23 @@ function genParams(currentQuery, options) {
  * @param {ResultParams} _
  * @returns
  */
-function handleResult({ key, alias, buildEntries, resultQuery, currentQuery }) {
+function handleResult({
+  key,
+  alias,
+  buildEntries,
+  resultQuery,
+  currentQuery,
+  mergeQuery,
+}) {
+  /** @param {QueryResult} result */
   return (result) => {
-    buildEntries.push([alias ? `${key}/${alias}` : key, result]);
-    return { buildEntries, resultQuery, currentQuery };
+    buildEntries.push([alias ? `${key}/${alias}` : key, result.res]);
+    return {
+      buildEntries,
+      resultQuery,
+      currentQuery,
+      mergeQuery: { ...mergeQuery, ...(result?.mergeQuery || {}) },
+    };
   };
 }
 
@@ -348,7 +418,7 @@ function handleResult({ key, alias, buildEntries, resultQuery, currentQuery }) {
  * @property {*} value
  */
 
-/** @typedef {ChainReducerOptions & ReducerOptions & QueryOptions} CombineOptions */
+/** @typedef {ChainReducerOptions & ReducerOptions & import("./executor.cjs").QueryOptions} CombineOptions */
 
 /**
  *
@@ -356,13 +426,14 @@ function handleResult({ key, alias, buildEntries, resultQuery, currentQuery }) {
  * @returns {function}
  */
 function chainReducer(options) {
-  return ({ buildEntries, resultQuery, currentQuery }) => {
+  return ({ buildEntries, resultQuery, currentQuery, mergeQuery }) => {
     const params = genParams(currentQuery, options);
     const res = processHandler({
       ...options,
       ...params,
       resultQuery,
       currentQuery,
+      mergeQuery,
     });
     currentQuery = res?.currentQuery || currentQuery;
     return getResult({
@@ -374,6 +445,7 @@ function chainReducer(options) {
         buildEntries,
         resultQuery: res.resultQuery,
         currentQuery,
+        mergeQuery,
         ...params,
       }),
     );
@@ -388,7 +460,7 @@ function chainReducer(options) {
 
 /**
  *
- * @param {ReducerOptions & QueryOptions} options
+ * @param {ReducerOptions & import("./executor.cjs").QueryOptions} options
  * @returns
  */
 function entryReducer(options) {
@@ -407,7 +479,7 @@ function entryReducer(options) {
  * @property {Query} query
  * @property {CurrentQuery} currentQuery
  * @property {MergeQuery} mergeQuery
- * @property {QueryOptions} options
+ * @property {import("./executor.cjs").QueryOptions} options
  */
 
 /**
@@ -422,7 +494,12 @@ const handleEntries = ({ query, currentQuery, mergeQuery, options }) =>
       mergeQuery,
       ...options,
     }),
-    Promise.resolve({ buildEntries: [], resultQuery: [], currentQuery }),
+    Promise.resolve({
+      buildEntries: [],
+      resultQuery: [],
+      currentQuery,
+      mergeQuery,
+    }),
   );
 
 /** @typedef {Record<string, any>} Query */
@@ -435,7 +512,7 @@ const handleEntries = ({ query, currentQuery, mergeQuery, options }) =>
  *
  * @param {Query} query - The query object to execute.
  * @param {CurrentQuery} currentQuery - The current query object.
- * @param {QueryOptions} options - The configuration object with methods and config function.
+ * @param {import("./executor.cjs").QueryOptions} options - The configuration object with methods and config function.
  * @param {MergeQuery} mergeQuery - The mergeQuery object (optional, defaults to an empty object).
  * @returns {Promise<BuildEntries>} A promise that resolves to an array of key-value pairs.
  */
