@@ -1,6 +1,6 @@
 {
   "name": "requrse",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "type": "module",
   "description": "Lightweight driven query language",
   "main": "libs/executor.cjs",
@@ -19,7 +19,8 @@
     "test:array-index": "node test/arrayIndex.test.mjs",
     "test:waterfall": "node test/waterfall.test.mjs",
     "test:class": "node test/class.test.mjs",
-    "test": "npm run test:starwars && npm run test:mongoose && npm run test:mongoose-lookup && npm run test:redis && npm run test:requrse && npm run test:inflight-request-cancelation && npm run test:fantasy && npm run test:basic && npm run test:array && npm run test:array-string && npm run test:duplicate && npm run test:array-index && npm run test:waterfall && npm run test:class",
+    "test:get-die": "node test/getDie.test.mjs",
+    "test": "npm run test:starwars && npm run test:mongoose && npm run test:mongoose-lookup && npm run test:redis && npm run test:requrse && npm run test:inflight-request-cancelation && npm run test:fantasy && npm run test:basic && npm run test:array && npm run test:array-string && npm run test:duplicate && npm run test:array-index && npm run test:waterfall && npm run test:class && npm run test:get-die",
     "test:coverage": "c8 --exclude samples --exclude test npm run test",
     "test:lcov": "c8 --exclude samples --exclude test --reporter lcov npm run test",
     "coverage": "coveralls < coverage/lcov.info"
@@ -45,6 +46,7 @@
     "c8": "^8.0.1",
     "coveralls": "^3.1.1",
     "dotenv": "^16.3.1",
+    "graphql": "^16.11.0",
     "ioredis": "^5.3.2",
     "mongoose": "^7.4.1"
   },

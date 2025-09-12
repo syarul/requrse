@@ -27,10 +27,14 @@ const iterate = (result, currentQuery) => {
       if (query instanceof Array) {
         return query;
       }
-      const e = Object.entries(result.reduce(reducer(query, i), {}));
-      return e.length === 1 ? e.flat() : e;
+      if (result.length) {
+        const e = Object.entries(result.reduce(reducer(query, i), {}));
+        return e.length === 1 ? e.flat() : e;
+      } else {
+        return query;
+      }
     })
-    .filter((f) => f.length);
+    .filter((f) => (f instanceof Array && f.length) || typeof f !== "object");
 };
 
 module.exports = iterate;

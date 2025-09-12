@@ -10,7 +10,148 @@ Lightweight driven query language
 
 Here's the first example to get you started. [Try it here](https://codepen.io/syarul/pen/xxmLMVP)—no build step required!
 
-> This library take some inspirations from NextQL and GraphQL
+## Comparison to graphQL
+
+| Feature          | GraphQL | reQurse |
+|------------------|---------|---------|
+| Query Syntax     | ✅ Declarative queries as strings (SDL) | ✅ JSON object-based queries |
+| Schema & Typing  | ✅ Strongly typed schemas | ❌ No schema or type enforcement |
+| Resolvers        | ✅ Defined server-side logic for each field | ✅ `methods` functions resolve keys |
+| API Federation   | ✅ Built-in with tools like Apollo Federation | ✅ Can compose multiple `rq()` into one federated API |
+| Use Cases        | ✅ Full APIs, strongly validated, efficient data fetching | ✅ Full APIs, Lightweight, data orchestration |
+| Runtime          | ✅ Client-server over HTTP | ✅ Client-server over HTTP/In-process library calls |
+| Complexity       | ❌ Requires schema + resolvers + server setup | ✅ Very light; no server setup |
+
+As example using the [RandomDie](https://www.graphql-js.org/docs/object-types/) sample
+
+```js
+// graphQL
+const RandomDie = new GraphQLObjectType({
+  name: "RandomDie",
+  fields: {
+    numSides: {
+      type: new GraphQLNonNull(GraphQLInt),
+      resolve: (die) => die.numSides,
+    },
+    rollOnce: {
+      type: new GraphQLNonNull(GraphQLInt),
+      resolve: (die) => 1 + Math.floor(Math.random() * die.numSides),
+    },
+    roll: {
+      type: new GraphQLList(GraphQLInt),
+      args: {
+        numRolls: { type: new GraphQLNonNull(GraphQLInt) },
+      },
+      resolve: (die, { numRolls }) => {
+        const output = [];
+        for (let i = 0; i < numRolls; i++) {
+          output.push(1 + Math.floor(Math.random() * die.numSides));
+        }
+        return output;
+      },
+    },
+  },
+});
+
+const QueryType = new GraphQLObjectType({
+  name: "Query",
+  fields: {
+    getDie: {
+      type: RandomDie,
+      args: {
+        numSides: { type: GraphQLInt },
+      },
+      resolve: (_, { numSides }) => {
+        return { numSides: numSides || 6 };
+      },
+    },
+  },
+});
+
+const schema = new GraphQLSchema({
+  query: QueryType,
+});
+
+const query = `
+  {
+    getDie(numSides: 6) {
+      numSides
+      rollOnce
+      roll(numRolls: 3)
+    }
+  }
+`;
+
+graphql({
+  schema,
+  source: query,
+}).then(console.log);
+// {
+//     "data": {
+//         "getDie": {
+//             "numSides": 6,
+//             "rollOnce": 1,
+//             "roll": [
+//                 2,
+//                 5,
+//                 1
+//             ]
+//         }
+//     }
+// }
+```
+
+```js
+class RandomDie extends RqExtender {
+  constructor() {
+    super();
+  }
+  rollOnce(die) {
+    return 1 + Math.floor(Math.random() * die.numSides);
+  }
+  roll(die, { numRolls }) {
+    const output = [];
+    for (let i = 0; i < numRolls; i++) {
+      output.push(1 + Math.floor(Math.random() * die.numSides));
+    }
+    return output;
+  }
+}
+
+const getDie = new RandomDie();
+
+const payload = {
+  data: {
+    getDie: {
+      $params: {
+        numSides: 6,
+      },
+      numSides: 1,
+      rollOnce: 1,
+      roll: {
+        $params: {
+          numRolls: 3,
+        },
+      },
+    },
+  },
+};
+
+getDie.compute(payload).then(console.log)
+// {
+//   "data": {
+//     "getDie": {
+//       "numSides": 6,
+//       "rollOnce": 2,
+//       "roll": [
+//         5,
+//         5,
+//         2
+//       ]
+//     }
+//   }
+// }
+```
 
 ## Usage
 

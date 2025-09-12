@@ -36,7 +36,7 @@ function waterfallParser(query) {
  *
  * @typedef {object} QueryOptions
  * @property {object} methods - Methods configuration.
- * @property {object} config - Configuration settings.
+ * @property {object} [config] - Configuration settings.
  * @property {string} [dataUrl] - Data url path.
  */
 
@@ -60,7 +60,7 @@ const rq = (query, options) => {
   const parseQuery = waterfallParser(query);
   return executeQuery(parseQuery, null, options)
     .then(postProcessing(options))
-    .catch((error) => console.error("rql Error:", error.message));
+    .catch((error) => console.error("rql Error:", error));
 };
 
 class RqExtender {
@@ -68,10 +68,16 @@ class RqExtender {
     this.methods = {};
   }
   compute(payload) {
-    return rq(payload, {
-      methods: this.methods,
-      config: (param) => this.getMethodsMap()[param],
-    });
+    if (Object.keys(this.methods).length) {
+      return rq(payload, {
+        methods: this.methods,
+        config: (param) => this.getMethodsMap()[param],
+      });
+    } else {
+      return rq(payload, {
+        methods: this.getMethodsMap(),
+      });
+    }
   }
 
   getMethodsMap() {

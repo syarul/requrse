@@ -38,7 +38,7 @@ const config = (param) =>
       fs.writeFileSync(file, JSON.stringify(newData));
       return newData;
     },
-    addedAge: (current, $params) => {
+    addedAge(current, $params) {
       $params.forEach((key) => {
         if (current[key]) {
           current[key]++;

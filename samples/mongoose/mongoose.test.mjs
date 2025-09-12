@@ -89,12 +89,12 @@ await test("Should give us undisputable result of a new book with title: Harry P
     Book: {
       find: { _id },
     },
-  } = await requrseMongoose(query);
+  } = await requrseMongoose(query, modelOptions);
   const updateQuery = {
     Book: {
       update: {
         $params: {
-          id: _id,
+          id: _id.toString(),
           data: {
             title: "Harry Potter and the Prisoner of Azkaban",
           },
@@ -103,7 +103,7 @@ await test("Should give us undisputable result of a new book with title: Harry P
       },
     },
   };
-  await requrseMongoose(updateQuery);
+  await requrseMongoose(updateQuery, modelOptions);
   const findQuery = {
     Book: {
       find: {
@@ -111,7 +111,7 @@ await test("Should give us undisputable result of a new book with title: Harry P
       },
     },
   };
-  const result = await requrseMongoose(findQuery);
+  const result = await requrseMongoose(findQuery, modelOptions);
   assert.deepEqual(result, {
     Book: {
       find: {
@@ -119,7 +119,7 @@ await test("Should give us undisputable result of a new book with title: Harry P
       },
     },
   });
-  return _id;
+  return _id.toString();
 });
 await test("Should give us empty result after removal operation of the book", async function (id) {
   const removeQuery = {

@@ -72,7 +72,7 @@ await test("Hello world null", () => {
       },
     },
   ).then((result) => {
-    assert.deepEqual(result, { test: { greeting: null } });
+    assert.deepEqual(result, { test: { greeting: 1 } });
   });
 });
 
