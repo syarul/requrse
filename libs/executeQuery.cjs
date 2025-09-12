@@ -84,7 +84,6 @@ function handleComputeParams({
  * @returns
  */
 function handleCompute({
-  key,
   compute,
   currentQuery,
   resultQuery,
@@ -141,7 +140,6 @@ function handleCompute({
  * @returns
  */
 function handleOther({
-  key,
   compute,
   currentQuery,
   resultQuery,
@@ -244,7 +242,6 @@ async function valueIsObject({
  * @returns {Promise<QueryResult>}
  */
 async function getResult({
-  // _key,
   value,
   currentQuery,
   resultQuery,
