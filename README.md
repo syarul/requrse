@@ -17,7 +17,7 @@ Here's the first example to get you started. [Try it here](https://codepen.io/sy
 | Feature         | GraphQL                                                   | reQurse                                               |
 | --------------- | --------------------------------------------------------- | ----------------------------------------------------- |
 | Query Syntax    | ✅ Declarative queries as strings (SDL)                   | ✅ JSON object-based queries                          |
-| Schema & Typing | ✅ Strongly typed schemas                                 | ❌ No schema or type enforcement                      |
+| Schema & Typing | ✅ Strongly typed schemas                                 | ❌ No type enforcement (support GraphQL schema)       |
 | Resolvers       | ✅ Defined server-side logic for each field               | ✅ `methods` functions resolve keys                   |
 | API Federation  | ✅ Built-in with tools like Apollo Federation             | ✅ Can compose multiple `rq()` into one federated API |
 | Use Cases       | ✅ Full APIs, strongly validated, efficient data fetching | ✅ Full APIs, Lightweight, data orchestration         |
