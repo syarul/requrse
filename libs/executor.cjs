@@ -98,7 +98,7 @@ class RqExtender {
     );
     const methodsMap = {};
     for (const name of methodNames) {
-      methodsMap[name] = this[name].bind(this);
+      methodsMap[name] = this[name]; // use rq context { query, computes }
     }
     return methodsMap;
   }

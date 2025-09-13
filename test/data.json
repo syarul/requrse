@@ -1,10 +1,1 @@
-{
-  "author": {
-    "name": "J.K. Rowling",
-    "country": "United Kingdom",
-    "books": [
-      "Harry Potter and the Philosopher's Stone",
-      "Harry Potter and the Chamber of Secrets"
-    ]
-  }
-}
+{"author":{"name":"J.K. Rowling","country":"United Kingdom","books":["Harry Potter and the Philosopher's Stone","Harry Potter and the Chamber of Secrets"]}}
