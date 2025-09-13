@@ -294,3 +294,94 @@ await test("Object tree", () => {
     });
   });
 });
+
+await test("Test Error", () => {
+  rq(
+    {
+      Test: {
+        test: {
+          trigger: 1,
+        },
+      },
+    },
+    {
+      methods: {
+        trigger() {
+          throw new Error("test error!");
+        },
+      },
+    },
+  ).catch((err) => {
+    assert.equal(err.message, "test error!");
+  });
+});
+
+await test("Test Error 2", () => {
+  rq(
+    {
+      Test: {
+        test: {
+          foo: 1,
+          trigger: 1,
+        },
+      },
+    },
+    {
+      methods: {
+        foo() {
+          return {
+            foo: 1,
+          };
+        },
+        trigger() {
+          throw new Error("test error 2!");
+        },
+      },
+    },
+  ).catch((err) => {
+    assert.equal(err.message, "test error 2!");
+  });
+});
+
+await test("Test internal lookup error", () => {
+  rq(
+    {
+      Test: {
+        test: {
+          foo: 1,
+          lookup: {
+            $params: {
+              bar: 1,
+            },
+          },
+        },
+      },
+    },
+    {
+      methods: {
+        foo() {
+          return [{ bar: 2 }];
+        },
+        find(query) {
+          throw new Error("find");
+          // return {
+          //   foo: 'foobar',
+          //   bar: 'barfoo',
+          // }[Object.keys(query)[0]]
+        },
+        lookup(result, { name, ...params }) {
+          const query = Object.entries(params)
+            .map(([key]) => key)
+            .reduce((acc, curr) => ({ ...acc, [curr]: result[curr] }), {});
+          return this.computes.find(query);
+        },
+      },
+    },
+  )
+    .then((result) => {
+      console.log(JSON.stringify(result));
+    })
+    .catch((err) => {
+      assert.equal(err.message, "find");
+    });
+});

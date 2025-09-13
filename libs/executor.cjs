@@ -58,9 +58,7 @@ function postProcessing(options) {
  */
 const rq = (query, options) => {
   const parseQuery = waterfallParser(query);
-  return executeQuery(parseQuery, null, options)
-    .then(postProcessing(options))
-    .catch((error) => console.error("rql Error:", error));
+  return executeQuery(parseQuery, null, options).then(postProcessing(options));
 };
 
 class RqExtender {

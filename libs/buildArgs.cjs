@@ -87,13 +87,7 @@ const buildArgs = function ($vParams, params, ...currentQuery) {
   }
   args.push(params);
   if (isObj(args[0])) {
-    args[0] = deepMerge(
-      {},
-      isObj(this) ? this : {},
-      args[0],
-      isObj($vParams) ? $vParams : {},
-      isObj(params) ? params : {},
-    );
+    args[0] = deepMerge({}, this, args[0], isObj($vParams) ? $vParams : {});
   }
   return args;
 };

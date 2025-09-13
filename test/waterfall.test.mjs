@@ -30,3 +30,32 @@ await test("Foo Bar", () => {
     assert.deepEqual(result, { Test: { test: { foo: { bar: "another" } } } });
   });
 });
+
+await test("Foo Bar fail", () => {
+  rq(
+    {
+      name: "Test",
+      computes: [
+        "test", // placeholder
+        "foo",
+        {
+          bar: "*",
+        },
+      ],
+    },
+    {
+      methods: {
+        bar() {
+          throw new Error("Unknown value");
+        },
+        foo() {
+          return {
+            bar: "foobar",
+          };
+        },
+      },
+    },
+  ).catch((error) => {
+    assert.equal(error.message, "Unknown value");
+  });
+});
