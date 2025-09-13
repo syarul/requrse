@@ -12,7 +12,7 @@ class RandomDie extends RqExtender {
   roll(die, { numRolls }) {
     const output = [];
     for (let i = 0; i < numRolls; i++) {
-      output.push(1 + Math.floor(Math.random() * die.numSides));
+      output.push(this.computes.rollOnce(die));
     }
     return output;
   }

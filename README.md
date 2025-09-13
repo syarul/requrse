@@ -115,7 +115,13 @@ class RandomDie extends RqExtender {
   roll(die, { numRolls }) {
     const output = [];
     for (let i = 0; i < numRolls; i++) {
-      output.push(1 + Math.floor(Math.random() * die.numSides));
+      // reuse rollOnce here
+      // context is using rq context
+      // { 
+      //   query, // combine queryResult
+      //   computes, // computed fields
+      // }
+      output.push(this.computes.rollOnce(die));
     }
     return output;
   }
