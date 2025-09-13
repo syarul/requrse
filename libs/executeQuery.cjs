@@ -19,7 +19,7 @@ const mapResult = require("./mapResult.cjs");
 
 /**
  *
- * @param {ComputeParams & GeneratedParams} _
+ * @param {ComputeParams & GeneratedParams & import("./executor.cjs").QueryOptions} _
  * @returns
  */
 function handleComputeParams({
@@ -30,12 +30,22 @@ function handleComputeParams({
   $vParams,
   params,
   key,
+  config,
+  methods,
 }) {
   if (currentQuery instanceof Array && !equal(resultQuery, currentQuery)) {
     for (const obj of currentQuery) {
       if ($vParams && !params && !obj[key]) {
         try {
-          resultQuery.push(compute.apply(mergeQuery, [obj, $vParams]));
+          resultQuery.push(
+            compute.apply(
+              {
+                query: mergeQuery,
+                computes: config || methods,
+              },
+              [obj, $vParams],
+            ),
+          );
         } catch (err) {
           throw err;
         }
@@ -43,7 +53,10 @@ function handleComputeParams({
         try {
           resultQuery.push(
             compute.apply(
-              mergeQuery,
+              {
+                query: mergeQuery,
+                computes: config || methods,
+              },
               buildArgs.apply(mergeQuery, [
                 $vParams,
                 params,
@@ -60,7 +73,10 @@ function handleComputeParams({
     try {
       resultQuery = [
         compute.apply(
-          mergeQuery,
+          {
+            query: mergeQuery,
+            computes: config || methods,
+          },
           buildArgs.apply(mergeQuery, [$vParams, params, currentQuery]),
         ),
       ];
@@ -70,9 +86,7 @@ function handleComputeParams({
   }
   return {
     computed: true,
-    ...(resultQuery instanceof Object
-      ? { currentQuery: resultQuery }
-      : { currentQuery }),
+    currentQuery: resultQuery,
     resultQuery,
     mergeQuery,
   };
@@ -97,7 +111,10 @@ function handleCompute({
 }) {
   try {
     currentQuery = compute.apply(
-      mergeQuery,
+      {
+        query: mergeQuery,
+        computes: config || methods,
+      },
       buildArgs.apply(mergeQuery, [$vParams, params, ...args]),
     );
   } catch (err) {
@@ -116,7 +133,10 @@ function handleCompute({
       if (methods?.[key] && compute && typeof compute === "function") {
         try {
           currentQuery[key] = compute.apply(
-            mergeQuery,
+            {
+              query: mergeQuery,
+              computes: config || methods,
+            },
             buildArgs.apply(mergeQuery, [$vParams, params, ...args]),
           );
         } catch (err) {
@@ -153,8 +173,8 @@ function handleOther({
   if (typeof currentQuery === "string" && config(currentQuery)) {
     currentQuery = config(currentQuery);
   }
-  if (!currentQuery && ($vParams || params)) {
-    currentQuery = $vParams || params;
+  if (!currentQuery && $vParams) {
+    currentQuery = $vParams;
   }
   return {
     computed: false,
@@ -404,7 +424,7 @@ function handleResult({
       buildEntries,
       resultQuery,
       currentQuery,
-      mergeQuery: { ...mergeQuery, ...(result?.mergeQuery || {}) },
+      mergeQuery: { ...mergeQuery, ...result.mergeQuery },
     };
   };
 }

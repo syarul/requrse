@@ -30,20 +30,20 @@ const middleware = (query, options = {}) => {
 
       const mongooseMethods = {
         get({ id }) {
-          return Model[this.key].findById(id);
+          return Model[this.query.key].findById(id);
         },
         find({ query }) {
-          return Model[this.key].find(query);
+          return Model[this.query.key].find(query);
         },
         create({ data }) {
-          const ins = new Model[this.key](data);
+          const ins = new Model[this.query.key](data);
           return ins.save();
         },
         update({ id }, { data }) {
-          return Model[this.key].findByIdAndUpdate(id, data);
+          return Model[this.query.key].findByIdAndUpdate(id, data);
         },
         remove({ id }) {
-          return Model[this.key].findByIdAndRemove(id);
+          return Model[this.query.key].findByIdAndRemove(id);
         },
         lookup(result, { name, ...params }) {
           // you can alternatively access query result from context 'this' also
@@ -53,7 +53,7 @@ const middleware = (query, options = {}) => {
           return Model[name].find(query);
         },
         delete() {
-          return Model[this.key].deleteMany({});
+          return Model[this.query.key].deleteMany({});
         },
       };
       // console.log(mongooseMethods, param)
