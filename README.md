@@ -102,6 +102,7 @@ graphql({
 ```
 
 ```js
+// rq
 class RandomDie extends RqExtender {
   constructor() {
     super();
@@ -120,7 +121,7 @@ class RandomDie extends RqExtender {
 
 const getDie = new RandomDie();
 
-const payload = {
+const query = {
   data: {
     getDie: {
       $params: {
@@ -137,7 +138,7 @@ const payload = {
   },
 };
 
-getDie.compute(payload).then(console.log)
+getDie.compute(query).then(console.log)
 // {
 //   "data": {
 //     "getDie": {
@@ -151,6 +152,22 @@ getDie.compute(payload).then(console.log)
 //     }
 //   }
 // }
+```
+
+You also can pass graphQL query instead (i.e. using graphQL client)
+
+```js
+const query = `
+  {
+    getDie(numSides: 6) {
+      numSides
+      rollOnce
+      roll(numRolls: 3)
+    }
+  }
+`;
+getDie.compute(query, { rootKey: 'data' }).then(console.log);
+
 ```
 
 ## Usage

@@ -2,13 +2,19 @@
 const executeQuery = require("./executeQuery.cjs");
 const arrayToObject = require("./arrayToObject.cjs");
 const dataPath = require("./dataPath.cjs");
+const gqlToJson = require("./gqlToJson.cjs");
 
 /**
  * Using waterfall structure for better readability
  * @param {*} query
+ * @param {QueryOptions} options
  * @returns
  */
-function waterfallParser(query) {
+function parser(query, options) {
+  if (typeof query === "string") {
+    // assume it graphQL query
+    return gqlToJson(query, options.rootKey);
+  }
   if (query.name && Array.isArray(query.computes)) {
     const result = {};
     const current = result;
@@ -36,8 +42,9 @@ function waterfallParser(query) {
  *
  * @typedef {object} QueryOptions
  * @property {object} methods - Methods configuration.
- * @property {object} [config] - Configuration settings.
- * @property {string} [dataUrl] - Data url path.
+ * @property {object} [config] - Optional, configuration settings.
+ * @property {string} [dataUrl] - Optional, data url path.
+ * @property {string} [rootKey] - Optional, graphQL root key name of Query if using graphQL query payload instead of JSON.
  */
 
 function postProcessing(options) {
@@ -57,7 +64,7 @@ function postProcessing(options) {
  * @returns {Promise<object>} A promise that resolves to the result object.
  */
 const rq = (query, options) => {
-  const parseQuery = waterfallParser(query);
+  const parseQuery = parser(query, options);
   return executeQuery(parseQuery, null, options).then(postProcessing(options));
 };
 
@@ -65,15 +72,17 @@ class RqExtender {
   constructor() {
     this.methods = {};
   }
-  compute(payload) {
+  compute(query, options) {
     if (Object.keys(this.methods).length) {
-      return rq(payload, {
+      return rq(query, {
         methods: this.methods,
         config: (param) => this.getMethodsMap()[param],
+        ...options,
       });
     } else {
-      return rq(payload, {
+      return rq(query, {
         methods: this.getMethodsMap(),
+        ...options,
       });
     }
   }
