@@ -1,6 +1,6 @@
 {
   "name": "requrse",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "type": "module",
   "description": "Lightweight driven query language",
   "main": "libs/executor.cjs",
