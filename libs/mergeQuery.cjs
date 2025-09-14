@@ -1,7 +1,10 @@
 // @ts-check
 
-const queryReducer = (acc, ql) => {
-  return (query) => {
+const queryReducer = (
+  /** @type {object} */ acc,
+  /** @type {import("./executeQuery.cjs").CurrentQuery} */ ql,
+) => {
+  return (/** @type {Query} */ query) => {
     return {
       ...acc,
       ...mergeQuery(query, ql),
@@ -9,16 +12,18 @@ const queryReducer = (acc, ql) => {
   };
 };
 
+/** @typedef {object} Query */
+
 /**
  * Merges two query objects.
  *
- * @param {object} query - The original query object.
- * @param {object | object[]} nextQuery - The query object(s) to merge with the original.
+ * @param {Query} query - The original query object.
+ * @param {import("./executeQuery.cjs").CurrentQuery} nextQuery - The query object(s) to merge with the original.
  * @returns {object} The merged query object.
  */
 const mergeQuery = (query, nextQuery) => {
   if (Array.isArray(nextQuery)) {
-    return mergeQuery(query, nextQuery.reduce(queryReducer(query), {}));
+    return mergeQuery(query, nextQuery.reduce(queryReducer(query, {}), {}));
   } else {
     return {
       ...query,

@@ -14,7 +14,7 @@ const mapResult = require("./mapResult.cjs");
  * @property {CurrentQuery} currentQuery
  * @property {ResultQuery} resultQuery
  * @property {MergeQuery} mergeQuery
- * @property {Boolean | undefined} failedComputed
+ * @property {Boolean | undefined} [failedComputed]
  */
 
 /**
@@ -166,11 +166,10 @@ function handleOther({
   mergeQuery,
   config,
   $vParams,
-  params,
 }) {
   currentQuery = compute;
   // resolve recurrence
-  if (typeof currentQuery === "string" && config(currentQuery)) {
+  if (config && typeof currentQuery === "string" && config(currentQuery)) {
     currentQuery = config(currentQuery);
   }
   if (!currentQuery && $vParams) {
@@ -244,7 +243,7 @@ async function valueIsObject({
 
 /**
  * @typedef Result
- * @property {Promise<CurrentQuery>} currentQuery
+ * @property {CurrentQuery} currentQuery
  * @property {ResultQuery} resultQuery
  * @property {Boolean | undefined} [computed]
  * @property {Boolean | undefined} [failedComputed]
@@ -314,43 +313,33 @@ async function getResult({
 const processHandler = ({
   key,
   compute,
-  $params,
   currentQuery,
-  resultQuery,
   mergeQuery,
-  $vParams,
-  params,
-  args,
-  config,
-  methods,
+  $params,
+  ...res
 }) => {
   mergeQuery.key = mergeQuery?.key || key; // model cache support
   mergeQuery = merge(mergeQuery, currentQuery);
-  const checks = {
-    0:
-      typeof compute === "function" &&
-      $params.currentQuery &&
-      !$params.currentQuery[key],
-    1: typeof compute === "function",
-  };
-  const handlers = {
-    0: handleComputeParams,
-    1: handleCompute,
-  };
+  let handler;
+  if (
+    typeof compute === "function" &&
+    $params.currentQuery &&
+    !$params.currentQuery[key]
+  ) {
+    handler = handleComputeParams;
+  } else if (typeof compute === "function") {
+    handler = handleCompute;
+  } else {
+    handler = handleOther;
+  }
 
-  const match = Object.keys(checks).find((key) => checks[parseInt(key)]);
-
-  return (handlers?.[match] || handleOther)({
+  return handler({
+    key,
     compute,
     currentQuery,
-    resultQuery,
     mergeQuery,
-    $vParams,
-    params,
-    key,
-    args,
-    config,
-    methods,
+    $params,
+    ...res,
   });
 };
 
@@ -443,7 +432,14 @@ function handleResult({
  * @returns {function}
  */
 function chainReducer(options) {
-  return ({ buildEntries, resultQuery, currentQuery, mergeQuery }) => {
+  return (
+    /** @type {ChainReducerPayload} */ {
+      buildEntries,
+      resultQuery,
+      currentQuery,
+      mergeQuery,
+    },
+  ) => {
     const params = genParams(currentQuery, options);
     const res = processHandler({
       ...options,
@@ -481,7 +477,10 @@ function chainReducer(options) {
  * @returns
  */
 function entryReducer(options) {
-  return (promiseChain, [_key, value]) =>
+  return (
+    /** @type {any} */ promiseChain,
+    /** @type {[string, any]} */ [_key, value],
+  ) =>
     promiseChain.then(
       chainReducer({
         _key,
@@ -524,6 +523,8 @@ const handleEntries = ({ query, currentQuery, mergeQuery, options }) =>
 /** @typedef {Record<string, any>} MergeQuery */
 /** @typedef {any[]} BuildEntries */
 
+/** @typedef {{ buildEntries: BuildEntries, resultQuery: ResultQuery, currentQuery: CurrentQuery, mergeQuery: MergeQuery }} ChainReducerPayload */
+
 /**
  * Executes a query with the provided configuration.
  *
@@ -539,6 +540,9 @@ const executeQuery = async (query, currentQuery, options, mergeQuery = {}) =>
     currentQuery,
     mergeQuery,
     options,
-  }).then(({ buildEntries }) => buildEntries);
+  }).then(
+    (/** @type {{ buildEntries: BuildEntries }} */ { buildEntries }) =>
+      buildEntries,
+  );
 
 module.exports = executeQuery;

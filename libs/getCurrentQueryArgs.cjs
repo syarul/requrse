@@ -10,7 +10,7 @@
 /**
  * Prepares arguments and parameters.
  *
- * @param {object} value - The value to process.
+ * @param {Record<string, any>} value - The value to process.
  * @param {object | null} currentQuery - The current query object.
  * @param {string | undefined} alias - Indicates whether an alias is used.
  * @param {string[] | string | undefined} params - An array of parameter names.

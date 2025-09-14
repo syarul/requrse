@@ -9,28 +9,32 @@ import {
 
 const RandomDie = new GraphQLObjectType({
   name: "RandomDie",
-  fields: {
-    numSides: {
-      type: new GraphQLNonNull(GraphQLInt),
-      resolve: (die) => die.numSides,
-    },
-    rollOnce: {
-      type: new GraphQLNonNull(GraphQLInt),
-      resolve: (die) => 1 + Math.floor(Math.random() * die.numSides),
-    },
-    roll: {
-      type: new GraphQLList(GraphQLInt),
-      args: {
-        numRolls: { type: new GraphQLNonNull(GraphQLInt) },
+  fields: () => {
+    const fields = {
+      numSides: {
+        type: new GraphQLNonNull(GraphQLInt),
+        resolve: (die) => die.numSides,
       },
-      resolve: (die, { numRolls }) => {
-        const output = [];
-        for (let i = 0; i < numRolls; i++) {
-          output.push(1 + Math.floor(Math.random() * die.numSides));
-        }
-        return output;
+      rollOnce: {
+        type: new GraphQLNonNull(GraphQLInt),
+        resolve: (die) => 1 + Math.floor(Math.random() * die.numSides),
       },
-    },
+      roll: {
+        type: new GraphQLList(GraphQLInt),
+        args: {
+          numRolls: { type: new GraphQLNonNull(GraphQLInt) },
+        },
+        resolve: (die, { numRolls }, ctx, info) => {
+          const rollOnceResolver = fields.rollOnce.resolve;
+          const output = [];
+          for (let i = 0; i < numRolls; i++) {
+            output.push(rollOnceResolver(die, {}, ctx, info));
+          }
+          return output;
+        },
+      },
+    };
+    return fields;
   },
 });
 
