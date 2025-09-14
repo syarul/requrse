@@ -5,7 +5,7 @@
  *
  * @param {object} query - The query object.
  * @param {Array<[string, any]>} result - The result to be mapped.
- * @param {object} currentQuery - The current query object.
+ * @param {{ [key: string]: any }} currentQuery - The current query object.
  * @returns {Array<[string, any]>} The mapped result.
  */
 const mapResult = (query, result, currentQuery) => {

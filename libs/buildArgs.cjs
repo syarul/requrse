@@ -3,11 +3,12 @@
 /**
  * Checks if an object is an associative object (not an array) and removes undefined values.
  *
- * @param {object} obj - The object to check.
- * @returns {object} A new object with undefined values removed.
+ * @param {Record<string, any>} obj - The object to check.
+ * @returns {object | undefined} A new object with undefined values removed.
  */
 const chk = (obj) => {
   if (obj instanceof Object && !(obj instanceof Array)) {
+    /** @type {Record<string, any>} */
     const newObj = {};
     Object.keys(obj).forEach((key) => {
       if (obj[key] !== undefined) {
@@ -28,8 +29,8 @@ const isObj = (obj) => !(obj instanceof Array) && typeof obj === "object";
 /**
  * Reduces an array of objects into a single object, removing undefined values.
  *
- * @param {object[]} arr - The array of objects to reduce.
- * @returns {object | object[]} A single object or an array of objects with undefined values removed.
+ * @param {any[] | null} arr - The array of objects to reduce.
+ * @returns {any} A single object or an array of objects with undefined values removed.
  */
 const reducer = (arr) => {
   if (arr instanceof Array && !arr.some((a) => typeof a !== "object")) {
@@ -71,14 +72,15 @@ const deepMerge = (target, ...sources) => {
 
 /**
  * Combines and prepares arguments for a function call.
- *
+ * @this {import("./executeQuery.cjs").MergeQuery}
  * @param {object | undefined} $vParams - Additional parameters.
  * @param {object} params - Main parameters.
- * @param {...object} currentQuery - Current query objects.
+ * @param {...object | null} currentQuery - Current query objects.
  * @returns {object[]} An array of arguments for the function call.
  */
 const buildArgs = function ($vParams, params, ...currentQuery) {
-  const args = [].concat(reducer(currentQuery));
+  /** @type {any[]} */
+  const args = currentQuery && [].concat(reducer(currentQuery));
   if ($vParams) {
     args.push($vParams);
     if (args.length === 1) {

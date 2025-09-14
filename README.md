@@ -12,46 +12,51 @@ Lightweight driven query language
 
 Here's the first example to get you started. [Try it here](https://codepen.io/syarul/pen/xxmLMVP)—no build step required!
 
-## Comparison to graphQL
+## Features
 
-| Feature         | GraphQL                                                   | reQurse                                               |
-| --------------- | --------------------------------------------------------- | ----------------------------------------------------- |
-| Query Syntax    | ✅ Declarative queries as strings (SDL)                   | ✅ JSON object-based queries                          |
-| Schema & Typing | ✅ Strongly typed schemas                                 | ❌ No type enforcement (support GraphQL schema)       |
-| Resolvers       | ✅ Defined server-side logic for each field               | ✅ `methods` functions resolve keys                   |
-| API Federation  | ✅ Built-in with tools like Apollo Federation             | ✅ Can compose multiple `rq()` into one federated API |
-| Use Cases       | ✅ Full APIs, strongly validated, efficient data fetching | ✅ Full APIs, Lightweight, data orchestration         |
-| Runtime         | ✅ Client-server over HTTP                                | ✅ Client-server over HTTP/In-process library calls   |
-| Complexity      | ❌ Requires schema + resolvers + server setup             | ✅ Very light; no server setup                        |
+| Feature         | reQurse                                                           |
+| --------------- | ----------------------------------------------------------------- |
+| Query Syntax    | ✅ JSON object-based queries                                      |
+| Schema & Typing | ❌ No type enforcement (support GraphQL schema)                   |
+| Resolvers       | ✅ `methods` functions resolve keys                               |
+| API Federation  | ✅ Can compose multiple instance of `rq()` into one federated API |
+| Caching         | ✅ Implemented (pass in options)                                  |
+| Use Cases       | ✅ Full APIs, Lightweight, data orchestration                     |
+| Runtime         | ✅ Client-server over HTTP/In-process library calls               |
+| Complexity      | ✅ Very light; no server setup                                    |
 
-As example using the [RandomDie](https://www.graphql-js.org/docs/object-types/) sample
+As direct comparison with graphQL using the [RandomDie](https://www.graphql-js.org/docs/object-types/) sample
 
 ```js
 // graphQL
 const RandomDie = new GraphQLObjectType({
   name: "RandomDie",
-  fields: {
-    numSides: {
-      type: new GraphQLNonNull(GraphQLInt),
-      resolve: (die) => die.numSides,
-    },
-    rollOnce: {
-      type: new GraphQLNonNull(GraphQLInt),
-      resolve: (die) => 1 + Math.floor(Math.random() * die.numSides),
-    },
-    roll: {
-      type: new GraphQLList(GraphQLInt),
-      args: {
-        numRolls: { type: new GraphQLNonNull(GraphQLInt) },
+  fields: () => {
+    const fields = {
+      numSides: {
+        type: new GraphQLNonNull(GraphQLInt),
+        resolve: (die) => die.numSides,
       },
-      resolve: (die, { numRolls }) => {
-        const output = [];
-        for (let i = 0; i < numRolls; i++) {
-          output.push(1 + Math.floor(Math.random() * die.numSides));
-        }
-        return output;
+      rollOnce: {
+        type: new GraphQLNonNull(GraphQLInt),
+        resolve: (die) => 1 + Math.floor(Math.random() * die.numSides),
       },
-    },
+      roll: {
+        type: new GraphQLList(GraphQLInt),
+        args: {
+          numRolls: { type: new GraphQLNonNull(GraphQLInt) },
+        },
+        resolve: (die, { numRolls }, ctx, info) => {
+          const rollOnceResolver = fields.rollOnce.resolve;
+          const output = [];
+          for (let i = 0; i < numRolls; i++) {
+            output.push(rollOnceResolver(die, {}, ctx, info));
+          }
+          return output;
+        },
+      },
+    };
+    return fields;
   },
 });
 
@@ -117,7 +122,7 @@ class RandomDie extends RqExtender {
     for (let i = 0; i < numRolls; i++) {
       // reuse rollOnce here
       // context is using rq context
-      // { 
+      // {
       //   query, // combine queryResult
       //   computes, // computed fields
       // }
@@ -184,12 +189,16 @@ A basic usage of reQurse.
 ```javascript
 import rq from "requrse";
 
-rq(query, { methods, config });
+rq(query, { methods, config, dataUrl, rootKey, cache, cacheDir });
 ```
 
 - **query**: _(object)_ **_required_** JSON like query.
 - **methods**: _(object)_ **_required_** define methods/computed fields that exist in the query.
 - **config**: _(object)_ **_optional_** extend and added parameterize control over methods.
+- **dataUrl**: _(string)_ **_optional_** resolve result to data url path.
+- **rootKey**: _(string)_ **_optional_** graphQL root key if using graphQL query, default to 'data' if not given.
+- **cache**: _(number)_ **_optional_** cache result in second(s).
+- **cacheDir**: _(string)_ **_optional_** custom caching directory default is '.tmp'.
 
 ```js
 await rq(

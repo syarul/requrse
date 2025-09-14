@@ -7,7 +7,9 @@ const checkEntry = require("./checkEntry.cjs");
  * @returns {Boolean}
  */
 const checkUniq = (arr) => {
-  const check = arr.map((i) => i && i?.[0]).filter((f) => f !== undefined);
+  const check = arr
+    .map((/** @type {any[]} */ i) => i && i?.[0])
+    .filter((/** @type {any} */ f) => f !== undefined);
   return check.length === [...new Set(check)].length;
 };
 
@@ -17,7 +19,10 @@ const checkUniq = (arr) => {
  * @returns
  */
 const reducer = (unique) => {
-  return (acc, item) => {
+  return (
+    /** @type {Record<String, any>} */ acc,
+    /** @type {any[]} */ item,
+  ) => {
     if (item && item[0]) {
       if (unique) {
         acc[item[0]] = arrayToObject(item[1]);
