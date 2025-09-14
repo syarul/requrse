@@ -110,6 +110,8 @@ graphql({
 
 ```js
 // rq
+import { RqExtender } from "requrse";
+
 class RandomDie extends RqExtender {
   constructor() {
     super();
@@ -187,7 +189,7 @@ getDie.compute(query, { rootKey: "data" }).then(console.log);
 A basic usage of reQurse.
 
 ```javascript
-import rq from "requrse";
+import rq, { RqExtender } from "requrse";
 
 rq(query, { methods, config, dataUrl, rootKey, cache, cacheDir });
 ```
